@@ -5,6 +5,8 @@ plugins {
     id("io.spring.dependency-management") version "1.0.10.RELEASE"
     kotlin("jvm") version "1.4.0"
     kotlin("plugin.spring") version "1.4.0"
+    kotlin("plugin.serialization") version "1.4.0"
+
 }
 
 group = "pl.edu.pw.mini"
@@ -21,12 +23,16 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.0.0-RC")
     implementation("org.springframework.boot:spring-boot-starter-web")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     }
     testImplementation("org.amshove.kluent:kluent:1.61")
+    testImplementation("com.github.tomakehurst:wiremock:2.27.1")
+    testImplementation("org.springframework.cloud:spring-cloud-starter-contract-stub-runner:2.2.4.RELEASE")
+
 }
 
 tasks.withType<Test> {
