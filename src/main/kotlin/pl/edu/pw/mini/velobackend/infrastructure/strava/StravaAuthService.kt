@@ -1,37 +1,59 @@
 package pl.edu.pw.mini.velobackend.infrastructure.strava
 
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
-import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.stereotype.Service
-import org.springframework.web.client.RestTemplate
-import org.springframework.web.util.UriComponentsBuilder
-import pl.edu.pw.mini.velobackend.infrastructure.strava.model.AuthorizationResponse
+import pl.edu.pw.mini.velobackend.domain.athlete.AthleteFactory
+import pl.edu.pw.mini.velobackend.domain.athlete.AthleteRepository
+import pl.edu.pw.mini.velobackend.infrastructure.strava.model.StravaUserRepository
+import pl.edu.pw.mini.velobackend.infrastructure.strava.model.SummaryActivity
+import pl.edu.pw.mini.velobackend.infrastructure.strava.model.streams.StreamSet
+import java.time.Instant
+import java.util.UUID
 
 @Service
-@EnableConfigurationProperties(StravaConfiguration::class)
-class StravaAuthService(val restTemplate: RestTemplate, val stravaConfiguration: StravaConfiguration) {
+class StravaAuthService(
+        val stravaClient: StravaClient,
+        val stravaUserRepository: StravaUserRepository,
+        val athleteRepository: AthleteRepository
+) {
 
     fun createStravaUser(code: String, scope: String, state: String): StravaUser {
-        val authorizationResponse = exchangeCodeForAccessToken(code)
+        val authorizationResponse = stravaClient.exchangeCodeForAccessToken(code)
+
+        val athlete = AthleteFactory().fromStravaAthlete(authorizationResponse.athlete)
+        athleteRepository.addAthlete(athlete)
 
         val stravaUser = StravaUser(authorizationResponse.athlete.id,
                 authorizationResponse.accessToken,
                 authorizationResponse.refreshToken,
                 authorizationResponse.expiresAt,
-                null)
-        //TODO: add him to the repository
+                athlete.id)
+        stravaUserRepository.addStravaUser(stravaUser)
         return stravaUser
     }
 
-    private fun exchangeCodeForAccessToken(code: String): AuthorizationResponse {
-        val uriBuilder = UriComponentsBuilder.fromHttpUrl(stravaConfiguration.tokenUrl)
-                .queryParam("client_id", stravaConfiguration.clientId)
-                .queryParam("client_secret", stravaConfiguration.clientSecret)
-                .queryParam("code", code)
-                .queryParam("grant_type", "authorization_code")
-        val response = restTemplate.postForEntity(uriBuilder.toUriString(), null, String::class.java)
-        return Json.decodeFromString(response.body.orEmpty()) //hack
+    fun updateWorkoutsFor(athleteId: UUID, before: Instant, after: Instant): String {
+        val stravaUser = stravaUserRepository.getStravaUserByAthleteId(athleteId)
+        if (stravaUser != null) {
+            val activitiesSummary: List<SummaryActivity> = stravaClient.getWorkoutsForStravaUser(stravaUser.accessToken, before, after)
+
+            //todo: foreach activity download streams and save to domain-type activity
+            activitiesSummary.map {
+                val streamSet = stravaClient.getWorkoutStreams(it, stravaUser.accessToken)
+                // todo: create domain workout from streams and activity summary
+                streamSet
+            }
+            return "success"
+        }
+        return "failed."
     }
+
+    private fun createWorkout(activity: SummaryActivity, streamSet: StreamSet) {
+//        Workout(
+//
+//             type = WorkoutType.RoadBike
+//        )
+    }
+
+
 }
 

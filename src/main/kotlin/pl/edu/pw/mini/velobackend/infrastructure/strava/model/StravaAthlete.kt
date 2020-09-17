@@ -9,8 +9,10 @@ data class StravaAthlete(
         val username: String,
         @SerialName("resource_state")
         val resourceState: Int,
-        val firstname: String,
-        val lastname: String,
+        @SerialName("firstname")
+        val firstName: String,
+        @SerialName("lastname")
+        val lastName: String,
         val city: String,
         val state: String,
         val country: String,

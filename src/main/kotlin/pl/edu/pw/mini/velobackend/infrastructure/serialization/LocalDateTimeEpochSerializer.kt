@@ -20,3 +20,24 @@ class LocalDateTimeEpochSerializer : KSerializer<LocalDateTime> {
 
     override fun deserialize(decoder: Decoder): LocalDateTime = LocalDateTime.ofEpochSecond(decoder.decodeLong(), 0, ZoneOffset.UTC)
 }
+
+class NullableLocalDateTimeEpochSerializer : KSerializer<LocalDateTime?> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("LocalDateTimeSerializer", PrimitiveKind.LONG)
+    private var dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ISO_INSTANT
+
+    override fun serialize(encoder: Encoder, value: LocalDateTime?) {
+        if (value != null) {
+            encoder.encodeLong(value.toEpochSecond(ZoneOffset.UTC))
+        } else {
+            encoder.encodeNull()
+        }
+    }
+
+    override fun deserialize(decoder: Decoder): LocalDateTime? {
+        return try {
+            LocalDateTime.ofEpochSecond(decoder.decodeLong(), 0, ZoneOffset.UTC)
+        } catch (e: Exception) {
+            null
+        }
+    }
+}

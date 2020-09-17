@@ -9,8 +9,7 @@ import kotlinx.serialization.json.Json
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock
-import org.springframework.test.context.ActiveProfiles
+import org.springframework.http.HttpStatus
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.web.util.UriComponentsBuilder
 import pl.edu.pw.mini.velobackend.api.BasicEndpointTest
@@ -19,15 +18,16 @@ import pl.edu.pw.mini.velobackend.infrastructure.strava.model.StravaAthlete
 import java.time.Duration
 import java.time.LocalDateTime
 
-@AutoConfigureWireMock(port = 27042)
-@ActiveProfiles("test")
 class StravaIntegrationEndpointTest : BasicEndpointTest() {
+
+    val stravaAuthUri = "/strava/auth"
 
     @Test
     fun `should handle Authorization Code from Strava`() {
         //when
+
         val result = mockMvc.perform(get(
-                UriComponentsBuilder.fromUriString("/strava-auth")
+                UriComponentsBuilder.fromUriString(stravaAuthUri)
                         .queryParam("code", "authorization code")
                         .queryParam("scope", "read,activity:read_all,profile:read_all")
                         .queryParam("state", "")
@@ -36,6 +36,20 @@ class StravaIntegrationEndpointTest : BasicEndpointTest() {
 
         //then
         result.response.contentAsString `should be equal to` "Successful authorizing user with id: 5235"
+    }
+
+    @Test
+    fun `should not accept Authorization with wrong scope`() {
+        //when
+        val result = mockMvc.perform(get(
+                UriComponentsBuilder.fromUriString(stravaAuthUri)
+                        .queryParam("code", "authorization code")
+                        .queryParam("scope", "activity:read_all")
+                        .queryParam("state", "")
+                        .build().toUri()
+        )).andReturn()
+        //then
+        result.response.status `should be equal to` HttpStatus.BAD_REQUEST.value()
     }
 
     companion object {
