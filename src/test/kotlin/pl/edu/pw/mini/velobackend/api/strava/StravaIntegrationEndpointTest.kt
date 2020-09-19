@@ -7,6 +7,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.urlMatching
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.amshove.kluent.`should be equal to`
+import org.amshove.kluent.`should contain`
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
@@ -35,7 +36,7 @@ class StravaIntegrationEndpointTest : BasicEndpointTest() {
         )).andReturn()
 
         //then
-        result.response.contentAsString `should be equal to` "Successful authorizing user with id: 5235"
+        result.response.contentAsString `should contain` "User UUID"
     }
 
     @Test

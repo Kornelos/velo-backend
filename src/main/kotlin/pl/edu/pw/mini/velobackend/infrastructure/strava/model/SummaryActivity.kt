@@ -2,7 +2,7 @@ package pl.edu.pw.mini.velobackend.infrastructure.strava.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import pl.edu.pw.mini.velobackend.infrastructure.serialization.NullableLocalDateTimeEpochSerializer
+import pl.edu.pw.mini.velobackend.infrastructure.serialization.LocalDateTimeIsoSerializer
 import java.time.LocalDateTime
 
 @Serializable
@@ -38,10 +38,10 @@ data class SummaryActivity(
 
         val type: String? = null,
 
-        @Serializable(with = NullableLocalDateTimeEpochSerializer::class) @SerialName("start_date")
+        @Serializable(with = LocalDateTimeIsoSerializer::class) @SerialName("start_date")
         val startDate: LocalDateTime? = null,
 
-        @Serializable(with = NullableLocalDateTimeEpochSerializer::class) @SerialName("start_date_local")
+        @Serializable(with = LocalDateTimeIsoSerializer::class) @SerialName("start_date_local")
         val startDateLocal: LocalDateTime? = null,
 
         val timezone: String? = null,

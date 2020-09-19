@@ -8,27 +8,27 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import pl.edu.pw.mini.velobackend.infrastructure.strava.StravaAuthService
-import pl.edu.pw.mini.velobackend.infrastructure.strava.StravaUser
+import pl.edu.pw.mini.velobackend.infrastructure.strava.StravaService
+import pl.edu.pw.mini.velobackend.infrastructure.strava.auth.StravaUser
 import java.time.Instant
 import java.util.UUID
 
 
 @RestController
 @RequestMapping("/strava")
-class StravaIntegrationEndpoint(val stravaAuthService: StravaAuthService) {
+class StravaIntegrationEndpoint(val stravaService: StravaService) {
 
     @GetMapping("/auth")
     fun authenticationRedirect(@RequestParam code: String, @RequestParam scope: String, @RequestParam state: String): String {
         //TODO: do not expose strava user in controller
         check(scope.contains("profile:read_all").and(scope.contains("activity:read_all")))
-        val stravaUser: StravaUser = stravaAuthService.createStravaUser(code, scope, state)
+        val stravaUser: StravaUser = stravaService.createStravaUser(code, scope, state)
         return "User UUID: ${stravaUser.athleteId}"
     }
 
     @PostMapping("/import")
     fun syncWorkouts(@RequestParam athleteId: UUID, @RequestParam beforeEpoch: Long, @RequestParam afterEpoch: Long): String {
-        return stravaAuthService.updateWorkoutsFor(athleteId, Instant.ofEpochSecond(beforeEpoch), Instant.ofEpochSecond(afterEpoch))
+        return stravaService.updateWorkoutsFor(athleteId, Instant.ofEpochSecond(beforeEpoch), Instant.ofEpochSecond(afterEpoch))
     }
 
     @ExceptionHandler(IllegalStateException::class)

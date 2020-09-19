@@ -1,7 +1,8 @@
-package pl.edu.pw.mini.velobackend.infrastructure.strava.model
+package pl.edu.pw.mini.velobackend.infrastructure.strava.dao
 
 import org.springframework.stereotype.Repository
-import pl.edu.pw.mini.velobackend.infrastructure.strava.StravaUser
+import pl.edu.pw.mini.velobackend.infrastructure.strava.auth.StravaUser
+import pl.edu.pw.mini.velobackend.infrastructure.strava.auth.TokenPair
 import java.util.UUID
 
 @Repository
@@ -16,6 +17,14 @@ class StravaUserRepositoryMock : StravaUserRepository {
     override fun addStravaUser(stravaUser: StravaUser) {
         if (getStravaUserById(stravaUser.id) == null) {
             stravaUsers.add(stravaUser)
+        }
+    }
+
+    override fun updateTokenPair(old: TokenPair, new: TokenPair) {
+        val user = stravaUsers.find { it.tokenPair == old }
+        if (user != null) {
+            stravaUsers.remove(user)
+            stravaUsers.add(StravaUser(user.id, new, user.athleteId))
         }
     }
 
