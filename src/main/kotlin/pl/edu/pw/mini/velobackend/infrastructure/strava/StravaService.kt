@@ -3,11 +3,14 @@ package pl.edu.pw.mini.velobackend.infrastructure.strava
 import org.springframework.stereotype.Service
 import pl.edu.pw.mini.velobackend.domain.athlete.AthleteFactory
 import pl.edu.pw.mini.velobackend.domain.athlete.AthleteRepository
+import pl.edu.pw.mini.velobackend.domain.workout.Workout
+import pl.edu.pw.mini.velobackend.domain.workout.WorkoutRepository
 import pl.edu.pw.mini.velobackend.infrastructure.strava.auth.StravaUser
 import pl.edu.pw.mini.velobackend.infrastructure.strava.auth.TokenPair
 import pl.edu.pw.mini.velobackend.infrastructure.strava.dao.StravaUserRepository
 import pl.edu.pw.mini.velobackend.infrastructure.strava.model.SummaryActivity
 import pl.edu.pw.mini.velobackend.infrastructure.strava.model.streams.StreamSet
+import pl.edu.pw.mini.velobackend.infrastructure.workout.WorkoutMapper
 import java.time.Instant
 import java.util.UUID
 
@@ -15,7 +18,8 @@ import java.util.UUID
 class StravaService(
         val stravaClient: StravaClient,
         val stravaUserRepository: StravaUserRepository,
-        val athleteRepository: AthleteRepository
+        val athleteRepository: AthleteRepository,
+        val workoutRepository: WorkoutRepository
 ) {
 
     fun createStravaUser(code: String, scope: String, state: String): StravaUser {
@@ -38,28 +42,30 @@ class StravaService(
         return stravaUser
     }
 
-    fun updateWorkoutsFor(athleteId: UUID, before: Instant, after: Instant): String {
+    fun updateWorkoutsFor(athleteId: UUID, before: Instant, after: Instant): List<Workout> {
         val stravaUser = stravaUserRepository.getStravaUserByAthleteId(athleteId)
-        if (stravaUser != null) {
+        return if (stravaUser != null) {
             val activitiesSummary: List<SummaryActivity> = stravaClient.getWorkoutsForStravaUser(stravaUser.tokenPair, before, after)
-
-            //todo: foreach activity download streams and save to domain-type activity
-            val workouts = activitiesSummary.map {
-                val streamSet = stravaClient.getWorkoutStreams(stravaUser.tokenPair, it)
-                // todo: create domain workout from streams and activity summary
-                it to streamSet
-            }
-            println(workouts)
-            return "success"
-        }
-        return "failed."
+            val stravaWorkouts = getStreamsForNewWorkouts(activitiesSummary, stravaUser)
+            stravaWorkouts.map { (summary, streams) -> saveWorkout(streams, summary, athleteId) }
+        } else emptyList()
     }
 
-    private fun createWorkout(activity: SummaryActivity, streamSet: StreamSet) {
-//        Workout(
-//
-//             type = WorkoutType.RoadBike
-//        )
+    private fun getStreamsForNewWorkouts(activitiesSummary: List<SummaryActivity>, stravaUser: StravaUser): List<Pair<SummaryActivity, StreamSet?>> {
+        return activitiesSummary.map {
+            var streamSet: StreamSet? = null
+            if (!workoutRepository.workoutExists(it.id ?: 0)) {
+                streamSet = stravaClient.getWorkoutStreams(stravaUser.tokenPair, it)
+            }
+            it to streamSet
+        }.filter { it.second != null }
+    }
+
+    private fun saveWorkout(streams: StreamSet?, summary: SummaryActivity, athleteId: UUID): Workout {
+        check(streams != null)
+        val workout = WorkoutMapper.createWorkout(summary, streams, athleteId)
+        workoutRepository.addWorkout(workout)
+        return workout
     }
 
 

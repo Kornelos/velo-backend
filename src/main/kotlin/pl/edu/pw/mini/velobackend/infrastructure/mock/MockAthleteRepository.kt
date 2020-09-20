@@ -1,12 +1,12 @@
 package pl.edu.pw.mini.velobackend.infrastructure.mock
 
-import org.springframework.stereotype.Component
+import org.springframework.stereotype.Repository
 import pl.edu.pw.mini.velobackend.domain.athlete.Athlete
 import pl.edu.pw.mini.velobackend.domain.athlete.AthleteRepository
 import java.util.ArrayList
 import java.util.UUID
 
-@Component
+@Repository
 class MockAthleteRepository : AthleteRepository {
 
     private val athletes = ArrayList<Athlete>()

@@ -36,7 +36,7 @@ data class SummaryActivity(
         @SerialName("elev_low")
         val elevLow: Float? = null,
 
-        val type: String? = null,
+        val type: ActivityType? = null,
 
         @Serializable(with = LocalDateTimeIsoSerializer::class) @SerialName("start_date")
         val startDate: LocalDateTime? = null,

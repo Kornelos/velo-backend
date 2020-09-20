@@ -6,7 +6,7 @@ import pl.edu.pw.mini.velobackend.infrastructure.strava.auth.TokenPair
 import java.util.UUID
 
 @Repository
-class StravaUserRepositoryMock : StravaUserRepository {
+class MockStravaUserRepository : StravaUserRepository {
 
     private val stravaUsers = ArrayList<StravaUser>()
 
@@ -28,4 +28,7 @@ class StravaUserRepositoryMock : StravaUserRepository {
         }
     }
 
+    fun removeAll() {
+        stravaUsers.clear()
+    }
 }
