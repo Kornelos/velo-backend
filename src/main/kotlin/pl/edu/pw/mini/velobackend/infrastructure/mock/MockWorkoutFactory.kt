@@ -2,43 +2,39 @@ package pl.edu.pw.mini.velobackend.infrastructure.mock
 
 import pl.edu.pw.mini.velobackend.domain.metrics.MetricsFactory
 import pl.edu.pw.mini.velobackend.domain.model.Location
+import pl.edu.pw.mini.velobackend.domain.workout.DataSeries
 import pl.edu.pw.mini.velobackend.domain.workout.Workout
-import pl.edu.pw.mini.velobackend.domain.workout.WorkoutRecord
 import pl.edu.pw.mini.velobackend.domain.workout.WorkoutType
 import java.time.LocalDateTime
-import java.util.*
-import kotlin.collections.ArrayList
+import java.util.UUID
 import kotlin.random.Random
 
 class MockWorkoutFactory {
-    fun createMockTrainingWithMetrics(durationSeconds: Int): Workout {
-        val mockLocation = Location(50.0, 51.0)
-        val mockAltitude = 2000.0
-        val mockSpeed = 9.0
-        val mockHR = 145
-        val mockCadence = 80
-        val mockPower = 180
-        var speed: Double
-        var distance = 0.0
-        val startTime = LocalDateTime.now()
-        val workoutRecords = List(durationSeconds + 1) {
-            speed = applyVariability(mockSpeed, 1.0)
-            distance += speed
-            WorkoutRecord(
-                    mockLocation,
-                    startTime.plusSeconds(it.toLong()),
-                    distance,
-                    applyVariability(mockAltitude, 5.0),
-                    speed,
-                    applyVariability(mockHR, 45),
-                    applyVariability(mockCadence, 20),
-                    applyVariability(mockPower, 180)
-            )
+    fun createMockTrainingWithMetrics(dataPoints: Int): Workout {
+        val ds = DataSeries(
+                time = List(dataPoints) { it },
+                distance = List(dataPoints) { it + applyVariability(5.0, 1.5).toFloat() },
+                latlng = List(dataPoints) {
+                    Location(
+                            50.0F + applyVariability(0.003, 0.0009).toFloat(),
+                            51.0F + applyVariability(0.003, 0.0009).toFloat(),
+                    )
+                },
+                altitude = List(dataPoints) { applyVariability(2000.0, 5.0).toFloat() },
+                velocity = List(dataPoints) { applyVariability(5.0, 1.5).toFloat() },
+                heartrate = List(dataPoints) { applyVariability(145, 45) },
+                cadence = List(dataPoints) { applyVariability(70, 40) },
+                power = List(dataPoints) { applyVariability(180, 180) },
+        )
 
-        }
         return Workout(
-                UUID.randomUUID(), workoutRecords, ArrayList(), WorkoutType.RoadBike,
-                MetricsFactory.createMetricsFrom(workoutRecords)
+                id = UUID.randomUUID(),
+                type = WorkoutType.Bike,
+                athleteId = UUID.randomUUID(),
+                startDateTime = LocalDateTime.now(),
+                stravaId = 1234,
+                dataSeries = ds,
+                metrics = MetricsFactory.createMetricsFor(ds)
         )
     }
 
