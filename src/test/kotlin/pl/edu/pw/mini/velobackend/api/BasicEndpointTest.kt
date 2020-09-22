@@ -18,7 +18,7 @@ import java.time.Duration
 import java.time.LocalDateTime
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 @AutoConfigureWireMock(port = 27042)
 @ActiveProfiles("test")
 @Import(WiremockConfig::class)
