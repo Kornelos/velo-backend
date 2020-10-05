@@ -29,6 +29,7 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-api:0.11.2")
     implementation("io.jsonwebtoken:jjwt-impl:0.11.2")
     implementation("io.jsonwebtoken:jjwt-jackson:0.11.2")
+    implementation("com.sendgrid:sendgrid-java:4.0.1")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
