@@ -5,12 +5,14 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.BeforeAll
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock
 import org.springframework.context.annotation.Import
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
+import pl.edu.pw.mini.velobackend.infrastructure.configuration.SecurityProperties
 import pl.edu.pw.mini.velobackend.infrastructure.strava.model.AuthorizationResponse
 import pl.edu.pw.mini.velobackend.infrastructure.strava.model.StravaAthlete
 import pl.edu.pw.mini.velobackend.wiremock.WiremockConfig
@@ -18,10 +20,11 @@ import java.time.Duration
 import java.time.LocalDateTime
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 @AutoConfigureWireMock(port = 27042)
 @ActiveProfiles("test")
 @Import(WiremockConfig::class)
+@EnableConfigurationProperties(SecurityProperties::class)
 abstract class BasicEndpointTest {
     @Autowired
     lateinit var mockMvc: MockMvc
