@@ -14,14 +14,16 @@ import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 import pl.edu.pw.mini.velobackend.infrastructure.configuration.FrontendProperties
+import pl.edu.pw.mini.velobackend.infrastructure.configuration.SecurityProperties
 
 
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true)
-@EnableConfigurationProperties(FrontendProperties::class)
+@EnableConfigurationProperties(FrontendProperties::class, SecurityProperties::class)
 internal class SecurityConfiguration(
         val secUserDetailService: SecUserDetailService,
-        val frontendProperties: FrontendProperties
+        val frontendProperties: FrontendProperties,
+        val securityProperties: SecurityProperties
 ) : WebSecurityConfigurerAdapter() {
     override fun configure(http: HttpSecurity) {
         http.cors().and()
@@ -31,8 +33,8 @@ internal class SecurityConfiguration(
                 .antMatchers("/register").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .addFilter(JwtAuthenticationFilter(authenticationManager()))
-                .addFilter(JwtAuthorizationFilter(authenticationManager()))
+                .addFilter(JwtAuthenticationFilter(authenticationManager(), securityProperties))
+                .addFilter(JwtAuthorizationFilter(authenticationManager(), securityProperties))
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
     }

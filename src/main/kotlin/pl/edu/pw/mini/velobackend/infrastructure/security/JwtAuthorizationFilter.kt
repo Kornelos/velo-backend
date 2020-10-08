@@ -9,11 +9,15 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
+import pl.edu.pw.mini.velobackend.infrastructure.configuration.SecurityProperties
 import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-class JwtAuthorizationFilter(authenticationManager: AuthenticationManager?) : BasicAuthenticationFilter(authenticationManager) {
+class JwtAuthorizationFilter(
+        authenticationManager: AuthenticationManager,
+        val securityProperties: SecurityProperties
+) : BasicAuthenticationFilter(authenticationManager) {
 
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
         val authentication = getAuthentication(request)
@@ -30,7 +34,7 @@ class JwtAuthorizationFilter(authenticationManager: AuthenticationManager?) : Ba
 
         if (token.isNotEmpty() && token.startsWith(SecurityConstants.TOKEN_PREFIX)) {
             try {
-                val signingKey = SecurityConstants.JWT_SECRET.toByteArray()
+                val signingKey = securityProperties.jwtSecret.toByteArray()
                 val parsedToken = Jwts.parserBuilder().setSigningKey(signingKey).build().parseClaimsJws(token.replace("Bearer ", ""))
                 val username = parsedToken.body.subject
                 val authorities = (parsedToken.body["rol"] as List<*>)

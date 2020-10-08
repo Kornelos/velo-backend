@@ -8,6 +8,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import pl.edu.pw.mini.velobackend.infrastructure.configuration.SecurityProperties
 import java.time.Duration
 import java.time.Instant
 import java.util.Date
@@ -16,10 +17,13 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import kotlin.streams.toList
 
-class JwtAuthenticationFilter(private val manager: AuthenticationManager) : UsernamePasswordAuthenticationFilter() {
+class JwtAuthenticationFilter(
+        private val manager: AuthenticationManager,
+        private val securityProperties: SecurityProperties
+) : UsernamePasswordAuthenticationFilter() {
 
     init {
-        setFilterProcessesUrl(SecurityConstants.AUTH_LOGIN_URL)
+        setFilterProcessesUrl(securityProperties.loginUrl)
     }
 
     override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication {
@@ -34,7 +38,7 @@ class JwtAuthenticationFilter(private val manager: AuthenticationManager) : User
 
         val roles = user.authorities.stream().map { obj: GrantedAuthority -> obj.authority }.toList()
 
-        val signingKey = SecurityConstants.JWT_SECRET.toByteArray()
+        val signingKey = securityProperties.jwtSecret.toByteArray()
 
         val token = Jwts.builder()
                 .signWith(Keys.hmacShaKeyFor(signingKey), SignatureAlgorithm.HS512)
