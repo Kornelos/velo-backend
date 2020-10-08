@@ -18,4 +18,21 @@ class MockVeloUserRepository : VeloUserRepository {
     override fun deleteVeloUser(user: VeloUser) {
         veloUsers.remove(user)
     }
+
+    override fun changePasswordForVeloUserWithEmail(email: String, password: String) {
+        val user = findVeloUserByEmail(email)
+        if (user != null) {
+            veloUsers.remove(user)
+            veloUsers.add(userWithNewPassword(user, password))
+        }
+    }
+
+    private fun userWithNewPassword(veloUser: VeloUser, newPassword: String) = VeloUser(
+            id = veloUser.id,
+            email = veloUser.email,
+            password = newPassword,
+            firstName = veloUser.firstName,
+            lastName = veloUser.lastName,
+            athleteUUIDs = veloUser.athleteUUIDs
+    )
 }
