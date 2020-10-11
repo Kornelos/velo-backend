@@ -15,6 +15,7 @@ import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 import pl.edu.pw.mini.velobackend.infrastructure.configuration.FrontendProperties
 import pl.edu.pw.mini.velobackend.infrastructure.configuration.SecurityProperties
+import pl.edu.pw.mini.velobackend.infrastructure.security.dto.JwtTokenRepository
 
 
 @EnableWebSecurity
@@ -23,7 +24,8 @@ import pl.edu.pw.mini.velobackend.infrastructure.configuration.SecurityPropertie
 internal class SecurityConfiguration(
         val secUserDetailService: SecUserDetailService,
         val frontendProperties: FrontendProperties,
-        val securityProperties: SecurityProperties
+        val securityProperties: SecurityProperties,
+        val jwtTokenRepository: JwtTokenRepository
 ) : WebSecurityConfigurerAdapter() {
     override fun configure(http: HttpSecurity) {
         http.cors().and()
@@ -35,8 +37,8 @@ internal class SecurityConfiguration(
                 ).permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .addFilter(JwtAuthenticationFilter(authenticationManager(), securityProperties))
-                .addFilter(JwtAuthorizationFilter(authenticationManager(), securityProperties))
+                .addFilter(JwtAuthenticationFilter(authenticationManager(), securityProperties, jwtTokenRepository))
+                .addFilter(JwtAuthorizationFilter(authenticationManager(), securityProperties, jwtTokenRepository))
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
     }

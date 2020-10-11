@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import pl.edu.pw.mini.velobackend.infrastructure.configuration.SecurityProperties
+import pl.edu.pw.mini.velobackend.infrastructure.security.dto.JwtTokenRepository
 import java.time.Duration
 import java.time.Instant
 import java.util.Date
@@ -19,7 +20,8 @@ import kotlin.streams.toList
 
 class JwtAuthenticationFilter(
         private val manager: AuthenticationManager,
-        private val securityProperties: SecurityProperties
+        private val securityProperties: SecurityProperties,
+        private val jwtTokenRepository: JwtTokenRepository
 ) : UsernamePasswordAuthenticationFilter() {
 
     init {
@@ -40,15 +42,19 @@ class JwtAuthenticationFilter(
 
         val signingKey = securityProperties.jwtSecret.toByteArray()
 
+        val expiration = Date.from(Instant.now().plus(Duration.ofDays(7)))
+
         val token = Jwts.builder()
                 .signWith(Keys.hmacShaKeyFor(signingKey), SignatureAlgorithm.HS512)
                 .setHeaderParam("typ", SecurityConstants.TOKEN_TYPE)
                 .setIssuer(SecurityConstants.TOKEN_ISSUER)
                 .setAudience(SecurityConstants.TOKEN_AUDIENCE)
                 .setSubject(user.username)
-                .setExpiration(Date.from(Instant.now().plus(Duration.ofDays(7))))
+                .setExpiration(expiration)
                 .claim("rol", roles)
                 .compact()
+
+        jwtTokenRepository.saveToken(JwtTokenDto(token, expiration.toInstant()))
         response.addHeader(SecurityConstants.TOKEN_HEADER, SecurityConstants.TOKEN_PREFIX + token)
     }
 }

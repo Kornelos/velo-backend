@@ -10,13 +10,15 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
 import pl.edu.pw.mini.velobackend.infrastructure.configuration.SecurityProperties
+import pl.edu.pw.mini.velobackend.infrastructure.security.dto.JwtTokenRepository
 import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 class JwtAuthorizationFilter(
         authenticationManager: AuthenticationManager,
-        val securityProperties: SecurityProperties
+        private val securityProperties: SecurityProperties,
+        private val jwtTokenRepository: JwtTokenRepository
 ) : BasicAuthenticationFilter(authenticationManager) {
 
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
@@ -35,11 +37,12 @@ class JwtAuthorizationFilter(
         if (token.isNotEmpty() && token.startsWith(SecurityConstants.TOKEN_PREFIX)) {
             try {
                 val signingKey = securityProperties.jwtSecret.toByteArray()
-                val parsedToken = Jwts.parserBuilder().setSigningKey(signingKey).build().parseClaimsJws(token.replace("Bearer ", ""))
+                val tokenValue = token.replace("Bearer ", "")
+                val parsedToken = Jwts.parserBuilder().setSigningKey(signingKey).build().parseClaimsJws(tokenValue)
                 val username = parsedToken.body.subject
                 val authorities = (parsedToken.body["rol"] as List<*>)
                         .map { authority: Any? -> SimpleGrantedAuthority(authority as String?) }
-                if (username.isNotEmpty()) {
+                if (username.isNotEmpty() && jwtTokenRepository.tokenExistsByValue(tokenValue)) {
                     return UsernamePasswordAuthenticationToken(username, null, authorities)
                 }
             } catch (exception: ExpiredJwtException) {
