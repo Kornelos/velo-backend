@@ -11,7 +11,6 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonArray
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should not be equal to`
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -20,31 +19,24 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.web.util.UriComponentsBuilder
 import pl.edu.pw.mini.velobackend.api.BasicEndpointTest
 import pl.edu.pw.mini.velobackend.api.strava.utils.WorkoutImportTestData
-import pl.edu.pw.mini.velobackend.infrastructure.mock.MockWorkoutRepository
 import pl.edu.pw.mini.velobackend.infrastructure.strava.auth.StravaUser
 import pl.edu.pw.mini.velobackend.infrastructure.strava.auth.TokenPair
-import pl.edu.pw.mini.velobackend.infrastructure.strava.dao.MockStravaUserRepository
+import pl.edu.pw.mini.velobackend.infrastructure.strava.dao.StravaUserRepository
+import pl.edu.pw.mini.velobackend.infrastructure.strava.dto.StravaUserDto
+import pl.edu.pw.mini.velobackend.infrastructure.workout.WorkoutDto
 import java.time.LocalDateTime
 import java.util.UUID
 
 class StravaImportTest : BasicEndpointTest() {
 
     @Autowired
-    lateinit var stravaUserRepository: MockStravaUserRepository
-
-    @Autowired
-    lateinit var workoutRepository: MockWorkoutRepository
+    lateinit var stravaUserRepository: StravaUserRepository
 
     @BeforeEach
     fun beforeEach() {
         createStubs()
-    }
-
-    @AfterEach
-    fun afterEach() {
-        //  WireMock.reset()
-        workoutRepository.removeAll()
-        stravaUserRepository.removeAll()
+        mongoTemplate.dropCollection(StravaUserDto::class.java)
+        mongoTemplate.dropCollection(WorkoutDto::class.java)
     }
 
     val stravaUser = StravaUser(1, TokenPair("accessToken", "refreshToken",

@@ -15,7 +15,7 @@ class StreamTransformer : ResponseDefinitionTransformer() {
         return ResponseDefinitionBuilder()
                 .withHeader("Content-Type", "application/json")
                 .withStatus(200)
-                .withBody(streamsResponses[id])
+                .withBody(streamsResponses[id].toString())
                 .build()
     }
 

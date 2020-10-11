@@ -10,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock
 import org.springframework.context.annotation.Import
+import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import pl.edu.pw.mini.velobackend.infrastructure.configuration.SecurityProperties
@@ -21,13 +22,16 @@ import java.time.LocalDateTime
 
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
-@AutoConfigureWireMock(port = 27042)
+@AutoConfigureWireMock(port = 0)
 @ActiveProfiles("test")
 @Import(WiremockConfig::class)
 @EnableConfigurationProperties(SecurityProperties::class)
 abstract class BasicEndpointTest {
     @Autowired
     lateinit var mockMvc: MockMvc
+
+    @Autowired
+    lateinit var mongoTemplate: MongoTemplate
 
     companion object {
         @BeforeAll
