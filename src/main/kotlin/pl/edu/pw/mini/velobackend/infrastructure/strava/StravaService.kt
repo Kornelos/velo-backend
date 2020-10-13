@@ -3,6 +3,7 @@ package pl.edu.pw.mini.velobackend.infrastructure.strava
 import org.springframework.stereotype.Service
 import pl.edu.pw.mini.velobackend.domain.athlete.AthleteFactory
 import pl.edu.pw.mini.velobackend.domain.athlete.AthleteRepository
+import pl.edu.pw.mini.velobackend.domain.user.VeloUserRepository
 import pl.edu.pw.mini.velobackend.domain.workout.Workout
 import pl.edu.pw.mini.velobackend.domain.workout.WorkoutRepository
 import pl.edu.pw.mini.velobackend.infrastructure.strava.auth.StravaUser
@@ -19,7 +20,8 @@ class StravaService(
         val stravaClient: StravaClient,
         val stravaUserRepository: StravaUserRepository,
         val athleteRepository: AthleteRepository,
-        val workoutRepository: WorkoutRepository
+        val workoutRepository: WorkoutRepository,
+        val veloUserRepository: VeloUserRepository
 ) {
 
     fun createStravaUser(code: String, scope: String, state: String): StravaUser {
@@ -39,6 +41,8 @@ class StravaService(
                 athlete.id
         )
         stravaUserRepository.addStravaUser(stravaUser)
+        veloUserRepository.changeStravaConnectedForVeloUserWithEmail(getEmailFromState(state), true)
+
         return stravaUser
     }
 
@@ -67,6 +71,8 @@ class StravaService(
         workoutRepository.addWorkout(workout)
         return workout
     }
+
+    private fun getEmailFromState(state: String) = state.split(":")[1].trim()
 
 
 }

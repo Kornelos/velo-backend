@@ -9,7 +9,8 @@ data class UserData(
         val firstName: String,
         val lastName: String,
         var profileImg: URI?,
-        val athleteUUIDs: MutableSet<UUID>
+        val athleteUUIDs: MutableSet<UUID>,
+        val isStravaConnected: Boolean
 )
 
-fun VeloUser.toUserData() = UserData(email, firstName, lastName, profileImg, athleteUUIDs)
+fun VeloUser.toUserData() = UserData(email, firstName, lastName, profileImg, athleteUUIDs, isStravaConnected)

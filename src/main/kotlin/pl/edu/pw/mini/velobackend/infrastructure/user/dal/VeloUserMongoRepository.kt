@@ -38,7 +38,25 @@ class VeloUserMongoRepository(
                     veloUserDto.firstName,
                     veloUserDto.lastName,
                     veloUserDto.profileImg,
-                    veloUserDto.athleteUUIDs
+                    veloUserDto.athleteUUIDs,
+                    veloUserDto.isStravaConnected
+            ))
+        }
+    }
+
+    override fun changeStravaConnectedForVeloUserWithEmail(email: String, isStravaConnected: Boolean) {
+        val veloUserDto: VeloUserDto? = mongoTemplate.findOne(Query.query(
+                Criteria.where("email").`is`(email)), VeloUserDto::class.java)
+        if (veloUserDto != null) {
+            mongoTemplate.save(VeloUserDto(
+                    veloUserDto.id,
+                    veloUserDto.email,
+                    veloUserDto.password,
+                    veloUserDto.firstName,
+                    veloUserDto.lastName,
+                    veloUserDto.profileImg,
+                    veloUserDto.athleteUUIDs,
+                    isStravaConnected
             ))
         }
     }

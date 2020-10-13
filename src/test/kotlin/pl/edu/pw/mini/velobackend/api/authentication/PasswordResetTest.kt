@@ -1,7 +1,6 @@
 package pl.edu.pw.mini.velobackend.api.authentication
 
 import org.amshove.kluent.`should not be equal to`
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
@@ -9,8 +8,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import pl.edu.pw.mini.velobackend.api.BasicEndpointTest
 import pl.edu.pw.mini.velobackend.domain.user.ForgottenPasswordTokenRepository
 import pl.edu.pw.mini.velobackend.domain.user.VeloUserRepository
-import pl.edu.pw.mini.velobackend.infrastructure.user.dto.VeloUserDto
-import pl.edu.pw.mini.velobackend.infrastructure.workout.WorkoutDto
 
 class PasswordResetTest : BasicEndpointTest() {
 
@@ -19,13 +16,6 @@ class PasswordResetTest : BasicEndpointTest() {
 
     @Autowired
     lateinit var userRepository: VeloUserRepository
-
-
-    @AfterEach
-    fun cleanMongo() {
-        mongoTemplate.dropCollection(VeloUserDto::class.java)
-        mongoTemplate.dropCollection(WorkoutDto::class.java)
-    }
 
     @Test
     fun `should reset user password`() {
