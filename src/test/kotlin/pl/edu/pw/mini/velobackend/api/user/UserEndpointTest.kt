@@ -26,7 +26,7 @@ class UserEndpointTest : BasicEndpointTest() {
         val result = mockMvc.perform(get(UriComponentsBuilder.fromUriString("/user").queryParam("email", email).toUriString())).andReturn()
 
         //then
-        result.response.contentAsString `should be equal to` """{"email":"test@mail.com","firstName":"fnm","lastName":"lnm","profileImg":null,"athleteUUIDs":[]}"""
+        result.response.contentAsString `should be equal to` """{"email":"test@mail.com","firstName":"fnm","lastName":"lnm","profileImg":null,"athleteUUIDs":[],"stravaConnected":false}"""
 
         //cleanup
         veloUserRepository.deleteVeloUser(user)

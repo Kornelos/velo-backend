@@ -41,7 +41,7 @@ class StravaIntegrationEndpointTest : BasicEndpointTest() {
         )).andReturn()
 
         //then
-        result.response.contentAsString `should contain` "User UUID"
+        result.response.contentAsString `should contain` "<body onload='window.close();'/>"
         veloUserRepository.findVeloUserByEmail(userEmail)!!.isStravaConnected `should be equal to` true
     }
 
