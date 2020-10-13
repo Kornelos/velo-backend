@@ -11,7 +11,7 @@ class WiremockConfig {
     @Bean
     fun optionsCustomizer(): WireMockConfigurationCustomizer? {
         return WireMockConfigurationCustomizer { options ->
-            options.extensions(StreamTransformer()).port(27042)
+            options.extensions(StreamTransformer())
         }
     }
 

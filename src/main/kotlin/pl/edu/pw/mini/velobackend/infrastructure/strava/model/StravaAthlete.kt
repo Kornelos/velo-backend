@@ -15,7 +15,7 @@ data class StravaAthlete(
         val lastName: String,
         val city: String,
         val state: String,
-        val country: String,
+        val country: String?,
         val sex: String,
         val premium: Boolean,
         val summit: Boolean,
