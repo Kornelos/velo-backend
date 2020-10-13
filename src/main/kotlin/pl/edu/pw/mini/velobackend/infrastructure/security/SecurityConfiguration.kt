@@ -29,11 +29,10 @@ internal class SecurityConfiguration(
         http.cors().and()
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/strava/auth").permitAll()
-                .antMatchers("/register").permitAll()
-                .antMatchers("/reset-password").permitAll()
-                .antMatchers("/confirm-password").permitAll()
-                .antMatchers("/").permitAll()
+                .antMatchers(
+                        "/", "/strava/auth", "/register", "/reset-password", "/confirm-password",
+                        "/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**", "/swagger-resources/**", "/swagger-resources"
+                ).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(JwtAuthenticationFilter(authenticationManager(), securityProperties))

@@ -20,6 +20,7 @@ import pl.edu.pw.mini.velobackend.wiremock.WiremockConfig
 import java.time.Duration
 import java.time.LocalDateTime
 
+
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
 @AutoConfigureWireMock(port = 0)
