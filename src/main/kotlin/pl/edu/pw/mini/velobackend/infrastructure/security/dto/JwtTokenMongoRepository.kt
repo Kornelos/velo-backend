@@ -19,6 +19,10 @@ class JwtTokenMongoRepository(
         mongoTemplate.remove(token)
     }
 
+    override fun deleteTokenByValue(tokenValue: String) {
+        mongoTemplate.remove(Query.query(Criteria.where("token").`is`(tokenValue)), JwtTokenDto::class.java)
+    }
+
     override fun tokenExistsByValue(tokenValue: String): Boolean {
         val maybeToken = mongoTemplate.findOne(Query.query(Criteria.where("token").`is`(tokenValue)), JwtTokenDto::class.java)
 
