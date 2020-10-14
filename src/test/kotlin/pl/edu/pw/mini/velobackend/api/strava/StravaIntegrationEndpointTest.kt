@@ -10,12 +10,16 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.web.util.UriComponentsBuilder
 import pl.edu.pw.mini.velobackend.api.BasicEndpointTest
+import pl.edu.pw.mini.velobackend.domain.athlete.AthleteRepository
 import pl.edu.pw.mini.velobackend.domain.user.VeloUserRepository
 
 class StravaIntegrationEndpointTest : BasicEndpointTest() {
 
     @Autowired
     lateinit var veloUserRepository: VeloUserRepository
+
+    @Autowired
+    lateinit var athleteRepository: AthleteRepository
 
     val stravaAuthUri = "/strava/auth"
 
@@ -40,9 +44,13 @@ class StravaIntegrationEndpointTest : BasicEndpointTest() {
                         .build().toUri()
         )).andReturn()
 
+        val veloUser = veloUserRepository.findVeloUserByEmail(userEmail)!!
+        val athlete = athleteRepository.getAthleteByEmail(userEmail)!!
+
         //then
         result.response.contentAsString `should contain` "<body onload='window.close();'/>"
-        veloUserRepository.findVeloUserByEmail(userEmail)!!.isStravaConnected `should be equal to` true
+        veloUser.isStravaConnected `should be equal to` true
+        veloUser.athleteUUIDs.contains(athlete.id)
     }
 
     @Test

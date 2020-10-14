@@ -11,6 +11,7 @@ import pl.edu.pw.mini.velobackend.infrastructure.strava.auth.TokenPair
 import pl.edu.pw.mini.velobackend.infrastructure.strava.dao.StravaUserRepository
 import pl.edu.pw.mini.velobackend.infrastructure.strava.model.SummaryActivity
 import pl.edu.pw.mini.velobackend.infrastructure.strava.model.streams.StreamSet
+import pl.edu.pw.mini.velobackend.infrastructure.utils.logger
 import pl.edu.pw.mini.velobackend.infrastructure.workout.WorkoutMapper
 import java.time.Instant
 import java.util.UUID
@@ -23,11 +24,13 @@ class StravaService(
         val workoutRepository: WorkoutRepository,
         val veloUserRepository: VeloUserRepository
 ) {
+    val logger by logger()
 
     fun createStravaUser(code: String, scope: String, state: String): StravaUser {
         val authorizationResponse = stravaClient.exchangeCodeForAccessToken(code)
 
-        val athlete = AthleteFactory().fromStravaAthlete(authorizationResponse.athlete)
+        val email = getEmailFromState(state)
+        val athlete = AthleteFactory().fromStravaAthlete(authorizationResponse.athlete, email)
         athleteRepository.addAthlete(athlete)
 
         val tokenPair = TokenPair(
@@ -40,8 +43,12 @@ class StravaService(
                 tokenPair,
                 athlete.id
         )
+
         stravaUserRepository.addStravaUser(stravaUser)
-        veloUserRepository.changeStravaConnectedForVeloUserWithEmail(getEmailFromState(state), true)
+        veloUserRepository.changeStravaConnectedForVeloUserWithEmail(email, true)
+        veloUserRepository.addAthleteForVeloUserWithEmail(email, athlete.id) // add self as trained athlete
+
+        logger.info("Successfully added Strava user {} for athlete with email {}", stravaUser.id, email)
 
         return stravaUser
     }

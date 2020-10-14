@@ -8,6 +8,7 @@ import pl.edu.pw.mini.velobackend.domain.user.VeloUser
 import pl.edu.pw.mini.velobackend.domain.user.VeloUserRepository
 import pl.edu.pw.mini.velobackend.infrastructure.user.dto.VeloUserDto
 import pl.edu.pw.mini.velobackend.infrastructure.user.dto.toVeloUserDto
+import java.util.UUID
 
 @Repository
 class VeloUserMongoRepository(
@@ -18,8 +19,7 @@ class VeloUserMongoRepository(
     }
 
     override fun findVeloUserByEmail(email: String): VeloUser? {
-        val veloUserDto: VeloUserDto? = mongoTemplate.findOne(Query.query(
-                Criteria.where("email").`is`(email)), VeloUserDto::class.java)
+        val veloUserDto: VeloUserDto? = findUserDtoByEmail(email)
         return veloUserDto?.toVeloUser()
     }
 
@@ -28,8 +28,7 @@ class VeloUserMongoRepository(
     }
 
     override fun changePasswordForVeloUserWithEmail(email: String, password: String) {
-        val veloUserDto: VeloUserDto? = mongoTemplate.findOne(Query.query(
-                Criteria.where("email").`is`(email)), VeloUserDto::class.java)
+        val veloUserDto = findUserDtoByEmail(email)
         if (veloUserDto != null) {
             mongoTemplate.save(VeloUserDto(
                     veloUserDto.id,
@@ -45,8 +44,7 @@ class VeloUserMongoRepository(
     }
 
     override fun changeStravaConnectedForVeloUserWithEmail(email: String, isStravaConnected: Boolean) {
-        val veloUserDto: VeloUserDto? = mongoTemplate.findOne(Query.query(
-                Criteria.where("email").`is`(email)), VeloUserDto::class.java)
+        val veloUserDto = findUserDtoByEmail(email)
         if (veloUserDto != null) {
             mongoTemplate.save(VeloUserDto(
                     veloUserDto.id,
@@ -60,4 +58,15 @@ class VeloUserMongoRepository(
             ))
         }
     }
+
+    override fun addAthleteForVeloUserWithEmail(email: String, athleteUUID: UUID) {
+        val veloUserDto: VeloUserDto? = findUserDtoByEmail(email)
+        if (veloUserDto != null) {
+            veloUserDto.athleteUUIDs.add(athleteUUID)
+            mongoTemplate.save(veloUserDto)
+        }
+    }
+
+    private fun findUserDtoByEmail(email: String): VeloUserDto? = mongoTemplate.findOne(Query.query(
+            Criteria.where("email").`is`(email)), VeloUserDto::class.java)
 }

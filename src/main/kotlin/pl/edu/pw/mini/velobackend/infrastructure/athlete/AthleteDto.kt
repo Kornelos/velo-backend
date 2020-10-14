@@ -7,6 +7,7 @@ import java.util.UUID
 
 data class AthleteDto(
         @Id val id: UUID,
+        val email: String,
         val firstName: String?,
         val lastName: String?,
         val age: Int?,
@@ -17,7 +18,7 @@ data class AthleteDto(
         val ftps: Map<LocalDate, Int>,
         val thresholdHeartRates: Map<LocalDate, Int>
 ) {
-    fun toAthlete() = Athlete(id, firstName, lastName, age, maxHeartRate, gender, height, weights, ftps, thresholdHeartRates)
+    fun toAthlete() = Athlete(id, email, firstName, lastName, age, maxHeartRate, gender, height, weights, ftps, thresholdHeartRates)
 }
 
-fun Athlete.toAthleteDto() = AthleteDto(id, firstName, lastName, age, maxHeartRate, gender, height, weights, ftps, thresholdHeartRates)
+fun Athlete.toAthleteDto() = AthleteDto(id, email, firstName, lastName, age, maxHeartRate, gender, height, weights, ftps, thresholdHeartRates)

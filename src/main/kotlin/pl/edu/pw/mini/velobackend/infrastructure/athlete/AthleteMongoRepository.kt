@@ -22,6 +22,8 @@ class AthleteMongoRepository(
         mongoTemplate.save(athlete.toAthleteDto())
     }
 
+    override fun getAthleteByEmail(email: String): Athlete? = findAthleteByKey("email", email)
+
     private fun findAthleteByKey(keyName: String, value: Any): Athlete? {
         val athleteDto = mongoTemplate.findOne(Query.query(
                 Criteria.where(keyName).`is`(value)), AthleteDto::class.java
