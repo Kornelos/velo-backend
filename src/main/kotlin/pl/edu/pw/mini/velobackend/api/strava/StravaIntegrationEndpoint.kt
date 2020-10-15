@@ -26,7 +26,7 @@ class StravaIntegrationEndpoint(val stravaService: StravaService) {
     fun authenticationRedirect(@RequestParam code: String, @RequestParam scope: String, @RequestParam state: String): String {
         check(scope.contains("profile:read_all").and(scope.contains("activity:read_all")))
         val stravaUser: StravaUser = stravaService.createStravaUser(code, scope, state)
-        return "User UUID: ${stravaUser.athleteId}"
+        return "<body onload='window.close();'/>"
     }
 
     @PostMapping("/import", produces = ["application/json"])

@@ -12,9 +12,10 @@ data class VeloUserDto(
         val firstName: String,
         val lastName: String,
         var profileImg: URI? = null,
-        val athleteUUIDs: MutableSet<UUID> = mutableSetOf()
+        val athleteUUIDs: MutableSet<UUID> = mutableSetOf(),
+        val isStravaConnected: Boolean
 ) {
-    fun toVeloUser() = VeloUser(id, email, password, firstName, lastName, profileImg, athleteUUIDs)
+    fun toVeloUser() = VeloUser(id, email, password, firstName, lastName, profileImg, athleteUUIDs, isStravaConnected)
 }
 
-fun VeloUser.toVeloUserDto() = VeloUserDto(id, email, password, firstName, lastName, profileImg, athleteUUIDs)
+fun VeloUser.toVeloUserDto() = VeloUserDto(id, email, password, firstName, lastName, profileImg, athleteUUIDs, isStravaConnected)

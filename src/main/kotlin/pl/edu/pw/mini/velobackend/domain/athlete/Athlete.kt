@@ -5,6 +5,7 @@ import java.util.UUID
 
 data class Athlete(
         val id: UUID,
+        val email: String,
         val firstName: String?,
         val lastName: String?,
         val age: Int?,
@@ -15,7 +16,7 @@ data class Athlete(
         val ftps: Map<LocalDate, Int> = HashMap(),
         val thresholdHeartRates: Map<LocalDate, Int> = HashMap()
 ) {
-    class Builder {
+    class Builder(private var email: String) {
         private var id: UUID = UUID.randomUUID()
         private var firstName: String? = null
         private var lastName: String? = null
@@ -33,6 +34,6 @@ data class Athlete(
         fun age(age: Int) = apply { this.age = age }
         fun gender(gender: String) = apply { this.gender = gender }
 
-        fun build() = Athlete(id, firstName, lastName, age, maxHeartRate, gender, height, weights, ftps, thresholdHeartRates)
+        fun build() = Athlete(id, email, firstName, lastName, age, maxHeartRate, gender, height, weights, ftps, thresholdHeartRates)
     }
 }

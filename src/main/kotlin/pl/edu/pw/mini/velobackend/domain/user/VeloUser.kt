@@ -10,5 +10,6 @@ data class VeloUser(
         val firstName: String,
         val lastName: String,
         var profileImg: URI? = null,
-        val athleteUUIDs: MutableSet<UUID> = mutableSetOf()
+        val athleteUUIDs: MutableSet<UUID> = mutableSetOf(),
+        val isStravaConnected: Boolean = false
 )
