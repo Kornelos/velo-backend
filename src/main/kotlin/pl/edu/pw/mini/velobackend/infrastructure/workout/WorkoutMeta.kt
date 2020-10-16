@@ -21,17 +21,13 @@ data class WorkoutMeta(
         @Serializable(with = DurationSerializer::class)
         val totalTime: Duration,
         val totalDistance: Float
-) {
-    companion object {
-        fun of(workout: Workout): WorkoutMeta {
-            return WorkoutMeta(
-                    name = workout.name,
-                    id = workout.id,
-                    athleteId = workout.athleteId,
-                    startDateTime = workout.startDateTime,
-                    totalTime = Duration.ofSeconds(workout.dataSeries.time.lastOrNull()?.toLong() ?: 0),
-                    totalDistance = workout.dataSeries.distance.lastOrNull() ?: 0.0F
-            )
-        }
-    }
-}
+)
+
+fun Workout.toWorkoutMeta() = WorkoutMeta(
+        name = name,
+        id = id,
+        athleteId = athleteId,
+        startDateTime = startDateTime,
+        totalTime = Duration.ofSeconds(dataSeries.time.lastOrNull()?.toLong() ?: 0),
+        totalDistance = dataSeries.distance.lastOrNull() ?: 0.0F
+)
