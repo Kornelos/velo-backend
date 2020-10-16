@@ -1,5 +1,6 @@
 package pl.edu.pw.mini.velobackend.api.strava
 
+import io.swagger.v3.oas.annotations.tags.Tag
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.springframework.http.HttpStatus
@@ -12,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.client.HttpServerErrorException
 import pl.edu.pw.mini.velobackend.infrastructure.strava.StravaService
-import pl.edu.pw.mini.velobackend.infrastructure.strava.auth.StravaUser
 import pl.edu.pw.mini.velobackend.infrastructure.workout.WorkoutMeta
 import java.time.Instant
 import java.util.UUID
@@ -20,12 +20,13 @@ import java.util.UUID
 
 @RestController
 @RequestMapping("/strava")
+@Tag(name = "Strava Integration")
 class StravaIntegrationEndpoint(val stravaService: StravaService) {
 
     @GetMapping("/auth")
     fun authenticationRedirect(@RequestParam code: String, @RequestParam scope: String, @RequestParam state: String): String {
         check(scope.contains("profile:read_all").and(scope.contains("activity:read_all")))
-        val stravaUser: StravaUser = stravaService.createStravaUser(code, scope, state)
+        stravaService.createStravaUser(code, scope, state)
         return "<body onload='window.close();'/>"
     }
 

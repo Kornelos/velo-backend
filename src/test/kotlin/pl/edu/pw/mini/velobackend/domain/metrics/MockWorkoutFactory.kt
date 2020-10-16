@@ -1,6 +1,5 @@
-package pl.edu.pw.mini.velobackend.infrastructure.mock
+package pl.edu.pw.mini.velobackend.domain.metrics
 
-import pl.edu.pw.mini.velobackend.domain.metrics.MetricsFactory
 import pl.edu.pw.mini.velobackend.domain.model.Location
 import pl.edu.pw.mini.velobackend.domain.workout.DataSeries
 import pl.edu.pw.mini.velobackend.domain.workout.Workout

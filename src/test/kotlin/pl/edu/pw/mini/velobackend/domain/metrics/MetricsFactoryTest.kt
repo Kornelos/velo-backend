@@ -4,7 +4,6 @@ import org.amshove.kluent.`should not be null`
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 import pl.edu.pw.mini.velobackend.domain.workout.DataSeries
-import pl.edu.pw.mini.velobackend.infrastructure.mock.MockWorkoutFactory
 import java.time.Duration
 
 class MetricsFactoryTest {

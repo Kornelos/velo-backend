@@ -20,7 +20,7 @@ class LoginTest : BasicEndpointTest() {
     fun `should log in registered user`() {
         //given
         mockMvc.perform(post("/register")
-                .header("Username", "email@test.com")
+                .header("Email", "email@test.com")
                 .header("Password", "pass")
                 .header("firstName", "first")
                 .header("lastName", "last")
@@ -28,7 +28,7 @@ class LoginTest : BasicEndpointTest() {
 
         //when
         val response = mockMvc.perform(post(securityProperties.loginUrl)
-                .header("Username", "email@test.com")
+                .header("Email", "email@test.com")
                 .header("Password", "pass")
         ).andReturn().response
 

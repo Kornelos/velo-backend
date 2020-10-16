@@ -21,7 +21,7 @@ class PasswordResetTest : BasicEndpointTest() {
     fun `should reset user password`() {
         //given user is registered
         mockMvc.perform(MockMvcRequestBuilders.post("/register")
-                .header("Username", "email@test.com")
+                .header("Email", "email@test.com")
                 .header("Password", "pass")
                 .header("firstName", "first")
                 .header("lastName", "last")

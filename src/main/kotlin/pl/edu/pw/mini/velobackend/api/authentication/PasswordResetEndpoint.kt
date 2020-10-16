@@ -1,5 +1,6 @@
 package pl.edu.pw.mini.velobackend.api.authentication
 
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -14,6 +15,7 @@ import pl.edu.pw.mini.velobackend.infrastructure.security.SecurityConstants.EMAI
 import java.util.UUID
 
 @RestController
+@Tag(name = "Password Reset")
 class PasswordResetEndpoint(
         val veloUserRepository: VeloUserRepository,
         val forgottenPasswordTokenRepository: ForgottenPasswordTokenRepository,

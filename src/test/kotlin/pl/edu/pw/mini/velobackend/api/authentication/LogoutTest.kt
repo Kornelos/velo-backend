@@ -24,7 +24,7 @@ class LogoutTest : BasicEndpointTest() {
     fun `should log out user`() {
         //given user registered
         mockMvc.perform(MockMvcRequestBuilders.post("/register")
-                .header("Username", "email@test.com")
+                .header("Email", "email@test.com")
                 .header("Password", "pass")
                 .header("firstName", "first")
                 .header("lastName", "last")
@@ -32,7 +32,7 @@ class LogoutTest : BasicEndpointTest() {
 
         //when user logs in
         val loginResponse = mockMvc.perform(MockMvcRequestBuilders.post(securityProperties.loginUrl)
-                .header("Username", "email@test.com")
+                .header("Email", "email@test.com")
                 .header("Password", "pass")
         ).andReturn().response
 
