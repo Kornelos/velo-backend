@@ -2,4 +2,4 @@
 spring boot backend for velo app
 
 ## API Docs
-available at `/swager-ui.html`
+available at `/swagger-ui.html`
