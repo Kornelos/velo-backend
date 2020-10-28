@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.client.HttpServerErrorException
 import pl.edu.pw.mini.velobackend.infrastructure.strava.StravaService
-import pl.edu.pw.mini.velobackend.infrastructure.workout.WorkoutMeta
+import pl.edu.pw.mini.velobackend.infrastructure.workout.toWorkoutMeta
 import java.time.Instant
 import java.util.UUID
 
@@ -36,7 +36,7 @@ class StravaIntegrationEndpoint(val stravaService: StravaService) {
                 Instant.ofEpochSecond(beforeEpoch),
                 Instant.ofEpochSecond(afterEpoch)
         )
-        return Json.encodeToString(workouts.map { WorkoutMeta.of(it) })
+        return Json.encodeToString(workouts.map { it.toWorkoutMeta() })
     }
 
     @ExceptionHandler(IllegalStateException::class)

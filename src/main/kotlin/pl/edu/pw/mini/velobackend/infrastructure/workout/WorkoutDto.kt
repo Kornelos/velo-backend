@@ -1,6 +1,7 @@
 package pl.edu.pw.mini.velobackend.infrastructure.workout
 
 import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.index.Indexed
 import pl.edu.pw.mini.velobackend.domain.metrics.Metrics
 import pl.edu.pw.mini.velobackend.domain.workout.DataSeries
 import pl.edu.pw.mini.velobackend.domain.workout.Workout
@@ -12,7 +13,7 @@ data class WorkoutDto(
         @Id val id: UUID,
         val name: String,
         val type: WorkoutType,
-        val athleteId: UUID,
+        @Indexed val athleteId: UUID,
         val dataSeries: DataSeries,
         val metrics: Metrics?,
         val stravaId: Long?,

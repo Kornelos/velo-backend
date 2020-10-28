@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import pl.edu.pw.mini.velobackend.domain.workout.Workout
 import pl.edu.pw.mini.velobackend.domain.workout.WorkoutRepository
+import pl.edu.pw.mini.velobackend.infrastructure.workout.WorkoutMeta
+import pl.edu.pw.mini.velobackend.infrastructure.workout.toWorkoutMeta
 import java.util.UUID
 
 @RestController
@@ -17,5 +19,6 @@ class WorkoutEndpoint(val workoutRepository: WorkoutRepository) {
         return workoutRepository.getWorkoutById(workoutId)
     }
 
-
+    @GetMapping("/workouts-metadata", produces = ["application/json"])
+    fun getWorkoutsMetadata(@RequestParam athleteId: UUID): List<WorkoutMeta> = workoutRepository.getWorkoutsForAthleteId(athleteId).map { it.toWorkoutMeta() }
 }

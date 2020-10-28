@@ -14,7 +14,9 @@ import java.util.UUID
 
 object WorkoutMapper {
     fun createWorkout(activity: SummaryActivity, streamSet: StreamSet, athleteId: UUID): Workout {
-        return Workout(type = parseActivityType(activity.type),
+        return Workout(
+                name = activity.name ?: "Unnamed Workout",
+                type = parseActivityType(activity.type),
                 stravaId = activity.id,
                 athleteId = athleteId,
                 startDateTime = activity.startDate ?: LocalDateTime.MIN,
