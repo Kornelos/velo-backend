@@ -28,7 +28,7 @@ class StravaIntegrationEndpointTest : BasicEndpointTest() {
         //given
         val userEmail = "email@test.com"
         mockMvc.perform(MockMvcRequestBuilders.post("/register")
-                .header("Username", userEmail)
+                .header("Email", userEmail)
                 .header("Password", "pass")
                 .header("firstName", "first")
                 .header("lastName", "last")

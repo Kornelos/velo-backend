@@ -29,9 +29,9 @@ class JwtAuthenticationFilter(
     }
 
     override fun attemptAuthentication(request: HttpServletRequest, response: HttpServletResponse): Authentication {
-        val username = request.getHeader("username")
+        val email = request.getHeader("email")
         val password = request.getHeader("password")
-        val authenticationToken = UsernamePasswordAuthenticationToken(username, password)
+        val authenticationToken = UsernamePasswordAuthenticationToken(email, password)
         return manager.authenticate(authenticationToken)
     }
 

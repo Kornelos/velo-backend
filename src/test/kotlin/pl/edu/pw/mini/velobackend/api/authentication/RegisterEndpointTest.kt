@@ -19,7 +19,7 @@ class RegisterEndpointTest : BasicEndpointTest() {
     fun `should register user if email does not exists in db`() {
         //when
         mockMvc.perform(post("/register")
-                .header("Username", "email@test.com")
+                .header("Email", "email@test.com")
                 .header("Password", "pass")
                 .header("firstName", "first")
                 .header("lastName", "last")
@@ -39,14 +39,14 @@ class RegisterEndpointTest : BasicEndpointTest() {
     fun `should not register user if email does not exists in db`() {
         //given
         mockMvc.perform(post("/register")
-                .header("Username", "email@test.com")
+                .header("Email", "email@test.com")
                 .header("Password", "pass")
                 .header("firstName", "test")
                 .header("lastName", "coach")
         ).andReturn()
         //when registering same email again
         mockMvc.perform(post("/register")
-                .header("Username", "email@test.com")
+                .header("Email", "email@test.com")
                 .header("Password", "pass")
                 .header("firstName", "test")
                 .header("lastName", "coach")
