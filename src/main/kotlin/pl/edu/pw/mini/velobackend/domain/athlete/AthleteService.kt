@@ -23,4 +23,6 @@ class AthleteService(
         coach.athleteUUIDs.add(athlete.id)
         userRepository.saveVeloUser(coach)
     }
+
+    fun getAthleteByEmail(email: String) = athleteRepository.getAthleteByEmail(email)
 }

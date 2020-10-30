@@ -27,10 +27,10 @@ class RegisterEndpoint(
         }
         //TODO: match password
         //require(password.matches(PASSWORD_REGEX))
-        if (veloUserRepository.findVeloUserByEmail(email) != null) {
+        if (veloUserRepository.getVeloUserByEmail(email) != null) {
             return ResponseEntity(HttpStatus.CONFLICT)
         }
-        veloUserRepository.addVeloUser(VeloUser(
+        veloUserRepository.saveVeloUser(VeloUser(
                 email = email,
                 password = passwordEncoder.encode(password),
                 firstName = firstName,

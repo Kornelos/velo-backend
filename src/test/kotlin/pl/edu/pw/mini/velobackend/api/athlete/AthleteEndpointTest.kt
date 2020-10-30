@@ -1,5 +1,7 @@
 package pl.edu.pw.mini.velobackend.api.athlete
 
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonObject
 import org.amshove.kluent.`should contain`
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -40,13 +42,29 @@ class AthleteEndpointTest : BasicEndpointTest() {
 
         //then
         coach.athleteUUIDs `should contain` athlete.id
+    }
 
+    @Test
+    fun `should return athlete for email`() {
+        //given
+        createUser("athlete")
+        addStrava("athlete@test.com")
+        val auth = login("athlete@test.com")
+
+        //when
+        val result = mockMvc.perform(MockMvcRequestBuilders.get("/athlete")
+                .header(SecurityConstants.TOKEN_HEADER, auth)
+                .header("athleteEmail", "athlete@test.com")
+        ).andReturn().response
+
+        //then
+        Json.parseToJsonElement(result.contentAsString).jsonObject.keys `should contain` "id"
     }
 
 
     private fun createUser(name: String) {
         mockMvc.perform(MockMvcRequestBuilders.post("/register")
-                .header("Username", "$name@test.com")
+                .header("email", "$name@test.com")
                 .header("Password", "pass")
                 .header("firstName", "first")
                 .header("lastName", "last")
@@ -64,7 +82,7 @@ class AthleteEndpointTest : BasicEndpointTest() {
     }
 
     private fun login(email: String) = mockMvc.perform(MockMvcRequestBuilders.post(securityProperties.loginUrl)
-            .header("Username", email)
+            .header("email", email)
             .header("Password", "pass")
     ).andReturn().response.getHeader(SecurityConstants.TOKEN_HEADER)!!
 

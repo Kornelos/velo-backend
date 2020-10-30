@@ -1,5 +1,6 @@
 package pl.edu.pw.mini.velobackend.api.athlete
 
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
@@ -18,4 +19,7 @@ class AthleteEndpoint(
         val athleteEmail = principal.name
         athleteService.addAthleteForUserWithEmail(coachEmail, athleteEmail)
     }
+
+    @GetMapping(produces = ["application/json"])
+    fun getAthlete(@RequestHeader athleteEmail: String) = athleteService.getAthleteByEmail(athleteEmail)
 }
