@@ -37,6 +37,9 @@ abstract class BasicEndpointTest {
     @Autowired
     lateinit var mongoTemplate: MongoTemplate
 
+    @Autowired
+    lateinit var securityProperties: SecurityProperties
+
     @AfterEach
     fun cleanMongo() {
         mongoTemplate.dropCollection(VeloUserDto::class.java)

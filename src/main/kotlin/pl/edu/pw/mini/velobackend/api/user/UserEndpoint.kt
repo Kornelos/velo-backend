@@ -16,7 +16,7 @@ class UserEndpoint(
 
     @GetMapping("/user", produces = ["application/json"])
     fun getUser(@RequestParam email: String): UserData? {
-        return veloUserRepository.findVeloUserByEmail(email)?.toUserData()
+        return veloUserRepository.getVeloUserByEmail(email)?.toUserData()
                 ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST, "User does not exist")
     }
 }

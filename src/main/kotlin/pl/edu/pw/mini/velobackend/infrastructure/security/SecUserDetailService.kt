@@ -13,7 +13,7 @@ class SecUserDetailService(
 ) : UserDetailsService {
     override fun loadUserByUsername(username: String?): UserDetails {
         check(username != null)
-        val veloUser = userRepository.findVeloUserByEmail(username)
+        val veloUser = userRepository.getVeloUserByEmail(username)
         return if (veloUser == null) {
             throw UsernameNotFoundException(username)
         } else {

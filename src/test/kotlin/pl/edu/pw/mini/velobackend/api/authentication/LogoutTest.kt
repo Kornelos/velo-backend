@@ -7,15 +7,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import pl.edu.pw.mini.velobackend.api.BasicEndpointTest
-import pl.edu.pw.mini.velobackend.infrastructure.configuration.SecurityProperties
 import pl.edu.pw.mini.velobackend.infrastructure.security.SecurityConstants
 import pl.edu.pw.mini.velobackend.infrastructure.security.dto.JwtTokenRepository
 
 @AutoConfigureMockMvc
 class LogoutTest : BasicEndpointTest() {
-
-    @Autowired
-    lateinit var securityProperties: SecurityProperties
 
     @Autowired
     lateinit var jwtTokenRepository: JwtTokenRepository

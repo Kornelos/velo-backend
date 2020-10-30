@@ -20,7 +20,7 @@ class UserEndpointTest : BasicEndpointTest() {
         //given
         val email = "test@mail.com"
         val user = VeloUser(email = email, password = "pwd", firstName = "fnm", lastName = "lnm")
-        veloUserRepository.addVeloUser(user)
+        veloUserRepository.saveVeloUser(user)
 
         //when
         val result = mockMvc.perform(get(UriComponentsBuilder.fromUriString("/user").queryParam("email", email).toUriString())).andReturn()
