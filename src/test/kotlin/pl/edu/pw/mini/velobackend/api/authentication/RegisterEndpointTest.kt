@@ -16,13 +16,14 @@ class RegisterEndpointTest : BasicEndpointTest() {
     lateinit var veloUserRepository: VeloUserRepository
 
     @Test
-    fun `should register user if email does not exists in db`() {
+    fun `should register user if email does not exist in db`() {
         //when
         mockMvc.perform(post("/register")
                 .header("Email", "email@test.com")
                 .header("Password", "pass")
                 .header("firstName", "first")
                 .header("lastName", "last")
+                .header("captcha","correct")
         ).andExpect(status().isCreated)
         val user = veloUserRepository.getVeloUserByEmail("email@test.com")!!
 
@@ -36,13 +37,14 @@ class RegisterEndpointTest : BasicEndpointTest() {
     }
 
     @Test
-    fun `should not register user if email does not exists in db`() {
+    fun `should not register user if email exists in db`() {
         //given
         mockMvc.perform(post("/register")
                 .header("Email", "email@test.com")
                 .header("Password", "pass")
                 .header("firstName", "test")
                 .header("lastName", "coach")
+                .header("captcha","correct")
         ).andReturn()
         //when registering same email again
         mockMvc.perform(post("/register")
@@ -50,7 +52,12 @@ class RegisterEndpointTest : BasicEndpointTest() {
                 .header("Password", "pass")
                 .header("firstName", "test")
                 .header("lastName", "coach")
+                .header("captcha","correct")
         ).andExpect(status().isConflict)
+    }
+
+    @Test
+    fun `should not register user with wrong captcha`(){
 
     }
 }

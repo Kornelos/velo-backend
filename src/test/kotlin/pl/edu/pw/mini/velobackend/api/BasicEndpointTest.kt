@@ -54,7 +54,13 @@ abstract class BasicEndpointTest {
                     .willReturn(WireMock.aResponse()
                             .withHeader("Content-Type", "application/json")
                             .withBody(createAuthResponse())))
+
+            WireMock.stubFor(WireMock.post(WireMock.urlMatching("/recaptcha/api/siteverify.*"))
+                    .willReturn(WireMock.aResponse()
+                            .withHeader("Content-Type", "application/json")
+                            .withBody("""{"success": true}""")))
         }
+
 
         private fun createAuthResponse(): String {
             val authorizationResponse = AuthorizationResponse("Bearer",

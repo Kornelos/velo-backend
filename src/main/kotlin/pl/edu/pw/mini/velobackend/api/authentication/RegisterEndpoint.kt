@@ -9,20 +9,28 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RestController
 import pl.edu.pw.mini.velobackend.domain.user.VeloUser
 import pl.edu.pw.mini.velobackend.domain.user.VeloUserRepository
+import pl.edu.pw.mini.velobackend.infrastructure.security.CaptchaService
 import pl.edu.pw.mini.velobackend.infrastructure.security.SecurityConstants.EMAIL_REGEX
 
 @RestController
 @Tag(name = "Register")
 class RegisterEndpoint(
         val veloUserRepository: VeloUserRepository,
-        val passwordEncoder: PasswordEncoder
+        val passwordEncoder: PasswordEncoder,
+        val captchaService: CaptchaService
 ) {
     @PostMapping("/register")
-    fun register(@RequestHeader email: String,
-                 @RequestHeader password: String,
-                 @RequestHeader firstName: String,
-                 @RequestHeader lastName: String): ResponseEntity<HttpStatus> {
+    fun register(
+            @RequestHeader email: String,
+            @RequestHeader password: String,
+            @RequestHeader firstName: String,
+            @RequestHeader lastName: String,
+            @RequestHeader captcha: String
+    ): ResponseEntity<HttpStatus> {
         if (!email.matches(EMAIL_REGEX)) {
+            return ResponseEntity(HttpStatus.BAD_REQUEST)
+        }
+        if(!captchaService.validateNotRobot(captcha)){
             return ResponseEntity(HttpStatus.BAD_REQUEST)
         }
         //TODO: match password
