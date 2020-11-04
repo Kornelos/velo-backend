@@ -27,7 +27,7 @@ class PasswordResetEndpoint(
         if (!email.matches(EMAIL_REGEX)) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong email format")
         }
-        val veloUser = veloUserRepository.findVeloUserByEmail(email)
+        val veloUser = veloUserRepository.getVeloUserByEmail(email)
         if (veloUser != null) {
             passwordResetSender.sendPasswordResetMessage(email, veloUser.firstName)
         }

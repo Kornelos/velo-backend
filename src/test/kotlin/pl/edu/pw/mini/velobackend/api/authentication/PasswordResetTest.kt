@@ -26,7 +26,7 @@ class PasswordResetTest : BasicEndpointTest() {
                 .header("firstName", "first")
                 .header("lastName", "last")
         ).andExpect(MockMvcResultMatchers.status().isCreated)
-        val user = userRepository.findVeloUserByEmail("email@test.com")
+        val user = userRepository.getVeloUserByEmail("email@test.com")
 
         //when
         mockMvc.perform(MockMvcRequestBuilders.post("/reset-password")
@@ -38,7 +38,7 @@ class PasswordResetTest : BasicEndpointTest() {
         //and
         mockMvc.perform(MockMvcRequestBuilders.get("/confirm-password?tokenId=$tokenId"))
                 .andExpect(MockMvcResultMatchers.status().isOk)
-        val userNewPass = userRepository.findVeloUserByEmail("email@test.com")
+        val userNewPass = userRepository.getVeloUserByEmail("email@test.com")
 
         //then
         user!!.password `should not be equal to` userNewPass!!.password

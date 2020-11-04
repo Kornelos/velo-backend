@@ -44,7 +44,7 @@ class StravaIntegrationEndpointTest : BasicEndpointTest() {
                         .build().toUri()
         )).andReturn()
 
-        val veloUser = veloUserRepository.findVeloUserByEmail(userEmail)!!
+        val veloUser = veloUserRepository.getVeloUserByEmail(userEmail)!!
         val athlete = athleteRepository.getAthleteByEmail(userEmail)!!
 
         //then

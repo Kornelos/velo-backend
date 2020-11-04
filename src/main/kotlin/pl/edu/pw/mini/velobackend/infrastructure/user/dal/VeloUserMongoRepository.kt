@@ -14,11 +14,11 @@ import java.util.UUID
 class VeloUserMongoRepository(
         val mongoTemplate: MongoTemplate
 ) : VeloUserRepository {
-    override fun addVeloUser(user: VeloUser) {
-        mongoTemplate.insert(user.toVeloUserDto())
+    override fun saveVeloUser(user: VeloUser) {
+        mongoTemplate.save(user.toVeloUserDto())
     }
 
-    override fun findVeloUserByEmail(email: String): VeloUser? {
+    override fun getVeloUserByEmail(email: String): VeloUser? {
         val veloUserDto: VeloUserDto? = findUserDtoByEmail(email)
         return veloUserDto?.toVeloUser()
     }

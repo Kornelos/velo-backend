@@ -24,7 +24,7 @@ class RegisterEndpointTest : BasicEndpointTest() {
                 .header("firstName", "first")
                 .header("lastName", "last")
         ).andExpect(status().isCreated)
-        val user = veloUserRepository.findVeloUserByEmail("email@test.com")!!
+        val user = veloUserRepository.getVeloUserByEmail("email@test.com")!!
 
         //then
         user `should not be` null
