@@ -8,6 +8,7 @@ import org.springframework.web.util.UriComponentsBuilder
 import pl.edu.pw.mini.velobackend.api.BasicEndpointTest
 import pl.edu.pw.mini.velobackend.domain.user.VeloUser
 import pl.edu.pw.mini.velobackend.domain.user.VeloUserRepository
+import java.util.UUID
 
 
 class UserEndpointTest : BasicEndpointTest() {
@@ -19,7 +20,7 @@ class UserEndpointTest : BasicEndpointTest() {
     fun `should return user by email`() {
         //given
         val email = "test@mail.com"
-        val user = VeloUser(email = email, password = "pwd", firstName = "fnm", lastName = "lnm")
+        val user = VeloUser(email = email, password = "pwd", firstName = "fnm", lastName = "lnm",athleteId = UUID.randomUUID())
         veloUserRepository.saveVeloUser(user)
 
         //when

@@ -18,10 +18,10 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+import pl.edu.pw.mini.velobackend.domain.user.VeloUser
 import pl.edu.pw.mini.velobackend.infrastructure.configuration.SecurityProperties
 import pl.edu.pw.mini.velobackend.infrastructure.strava.model.AuthorizationResponse
 import pl.edu.pw.mini.velobackend.infrastructure.strava.model.StravaAthlete
-import pl.edu.pw.mini.velobackend.infrastructure.user.dto.VeloUserDto
 import pl.edu.pw.mini.velobackend.infrastructure.workout.WorkoutDto
 import pl.edu.pw.mini.velobackend.wiremock.WiremockConfig
 import java.time.Duration
@@ -46,7 +46,7 @@ abstract class BasicEndpointTest {
 
     @AfterEach
     fun cleanMongo() {
-        mongoTemplate.dropCollection(VeloUserDto::class.java)
+        mongoTemplate.dropCollection(VeloUser::class.java)
         mongoTemplate.dropCollection(WorkoutDto::class.java)
     }
 

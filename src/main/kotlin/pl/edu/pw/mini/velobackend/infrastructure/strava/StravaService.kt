@@ -1,8 +1,11 @@
 package pl.edu.pw.mini.velobackend.infrastructure.strava
 
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
-import pl.edu.pw.mini.velobackend.domain.athlete.AthleteFactory
+import org.springframework.web.server.ResponseStatusException
+import pl.edu.pw.mini.velobackend.domain.athlete.Athlete
 import pl.edu.pw.mini.velobackend.domain.athlete.AthleteRepository
+import pl.edu.pw.mini.velobackend.domain.user.VeloUser
 import pl.edu.pw.mini.velobackend.domain.user.VeloUserRepository
 import pl.edu.pw.mini.velobackend.domain.workout.Workout
 import pl.edu.pw.mini.velobackend.domain.workout.WorkoutRepository
@@ -30,8 +33,8 @@ class StravaService(
         val authorizationResponse = stravaClient.exchangeCodeForAccessToken(code)
 
         val email = getEmailFromState(state)
-        val athlete = AthleteFactory().fromStravaAthlete(authorizationResponse.athlete, email)
-        athleteRepository.addAthlete(athlete)
+        val athlete: Athlete = athleteRepository.getAthleteByEmail(email)
+                ?: throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Athlete for profile with $email does not exist")
 
         val tokenPair = TokenPair(
                 accessToken = authorizationResponse.accessToken,
@@ -46,6 +49,7 @@ class StravaService(
 
         stravaUserRepository.addStravaUser(stravaUser)
         veloUserRepository.changeStravaConnectedForVeloUserWithEmail(email, true)
+        athleteRepository.changeStravaConnectedForAthleteWithEmail(email,true)
         veloUserRepository.addAthleteForVeloUserWithEmail(email, athlete.id) // add self as trained athlete
 
         logger.info("Successfully added Strava user {} for athlete with email {}", stravaUser.id, email)
