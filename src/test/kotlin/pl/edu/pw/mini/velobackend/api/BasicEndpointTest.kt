@@ -5,7 +5,6 @@ import com.github.tomakehurst.wiremock.client.WireMock.stubFor
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.EnableConfigurationProperties
@@ -44,8 +43,21 @@ abstract class BasicEndpointTest {
     @Autowired
     lateinit var securityProperties: SecurityProperties
 
+    @BeforeEach
+    fun captchaStub() {
+        stubFor(WireMock.post(WireMock.urlMatching("/recaptcha/api/siteverify.*"))
+                .willReturn(WireMock.aResponse()
+                        .withHeader("Content-Type", "application/json")
+                        .withBody("""{"success": true}""")))
+        stubFor(WireMock.post(WireMock.urlMatching("/oauth/token.*"))
+                .willReturn(WireMock.aResponse()
+                        .withHeader("Content-Type", "application/json")
+                        .withBody(createAuthResponse())))
+    }
+
     @AfterEach
     fun cleanMongo() {
+        WireMock.reset()
         mongoTemplate.dropCollection(VeloUser::class.java)
         mongoTemplate.dropCollection(WorkoutDto::class.java)
     }
@@ -60,35 +72,18 @@ abstract class BasicEndpointTest {
         ).andExpect(MockMvcResultMatchers.status().isCreated)
     }
 
-    companion object {
-        @BeforeAll
-        @JvmStatic
-        fun setupAuthStub() {
-            stubFor(WireMock.post(WireMock.urlMatching("/oauth/token.*"))
-                    .willReturn(WireMock.aResponse()
-                            .withHeader("Content-Type", "application/json")
-                            .withBody(createAuthResponse())))
-
-
-            stubFor(WireMock.post(WireMock.urlMatching("/recaptcha/api/siteverify.*"))
-                    .willReturn(WireMock.aResponse()
-                            .withHeader("Content-Type", "application/json")
-                            .withBody("""{"success": true}""")))
-        }
-
-
-        private fun createAuthResponse(): String {
-            val authorizationResponse = AuthorizationResponse("Bearer",
-                    LocalDateTime.now().plusHours(6),
-                    Duration.ofHours(6),
-                    "refresh_token",
-                    "some access token",
-                    StravaAthlete(5235, "user", 2, "test", "user",
-                            "a", "b", "c", "M", premium = true, summit = true,
-                            createdAt = "2012-06-16T14:55:39Z", updatedAt = "2012-06-16T14:55:39Z", badgeTypeId = 0,
-                            profileMedium = null, profile = null, friend = null, follower = null)
-            )
-            return Json.encodeToString(authorizationResponse)
-        }
+    private fun createAuthResponse(): String {
+        val authorizationResponse = AuthorizationResponse("Bearer",
+                LocalDateTime.now().plusHours(6),
+                Duration.ofHours(6),
+                "refresh_token",
+                "some access token",
+                StravaAthlete(5235, "user", 2, "test", "user",
+                        "a", "b", "c", "M", premium = true, summit = true,
+                        createdAt = "2012-06-16T14:55:39Z", updatedAt = "2012-06-16T14:55:39Z", badgeTypeId = 0,
+                        profileMedium = null, profile = null, friend = null, follower = null)
+        )
+        return Json.encodeToString(authorizationResponse)
     }
+
 }
