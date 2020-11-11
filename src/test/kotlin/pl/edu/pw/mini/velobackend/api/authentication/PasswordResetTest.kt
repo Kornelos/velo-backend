@@ -20,12 +20,7 @@ class PasswordResetTest : BasicEndpointTest() {
     @Test
     fun `should reset user password`() {
         //given user is registered
-        mockMvc.perform(MockMvcRequestBuilders.post("/register")
-                .header("Email", "email@test.com")
-                .header("Password", "pass")
-                .header("firstName", "first")
-                .header("lastName", "last")
-        ).andExpect(MockMvcResultMatchers.status().isCreated)
+        registerUser("email@test.com")
         val user = userRepository.getVeloUserByEmail("email@test.com")
 
         //when

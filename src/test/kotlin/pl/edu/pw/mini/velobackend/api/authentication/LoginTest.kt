@@ -15,12 +15,7 @@ class LoginTest : BasicEndpointTest() {
     @Test
     fun `should log in registered user`() {
         //given
-        mockMvc.perform(post("/register")
-                .header("Email", "email@test.com")
-                .header("Password", "pass")
-                .header("firstName", "first")
-                .header("lastName", "last")
-        ).andExpect(status().isCreated)
+        registerUser("email@test.com")
 
         //when
         val response = mockMvc.perform(post(securityProperties.loginUrl)

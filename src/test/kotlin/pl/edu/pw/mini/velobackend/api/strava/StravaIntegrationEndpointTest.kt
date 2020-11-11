@@ -27,12 +27,7 @@ class StravaIntegrationEndpointTest : BasicEndpointTest() {
     fun `should handle Authorization Code from Strava`() {
         //given
         val userEmail = "email@test.com"
-        mockMvc.perform(MockMvcRequestBuilders.post("/register")
-                .header("Email", userEmail)
-                .header("Password", "pass")
-                .header("firstName", "first")
-                .header("lastName", "last")
-        ).andExpect(MockMvcResultMatchers.status().isCreated)
+        registerUser(userEmail)
 
         //when
 

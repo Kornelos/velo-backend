@@ -1,10 +1,12 @@
 package pl.edu.pw.mini.velobackend.api
 
 import com.github.tomakehurst.wiremock.client.WireMock
+import com.github.tomakehurst.wiremock.client.WireMock.stubFor
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -14,6 +16,8 @@ import org.springframework.context.annotation.Import
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import pl.edu.pw.mini.velobackend.infrastructure.configuration.SecurityProperties
 import pl.edu.pw.mini.velobackend.infrastructure.strava.model.AuthorizationResponse
 import pl.edu.pw.mini.velobackend.infrastructure.strava.model.StravaAthlete
@@ -46,16 +50,27 @@ abstract class BasicEndpointTest {
         mongoTemplate.dropCollection(WorkoutDto::class.java)
     }
 
+    fun registerUser(email: String) {
+        mockMvc.perform(MockMvcRequestBuilders.post("/register")
+                .header("Email", email)
+                .header("Password", "pass")
+                .header("firstName", "first")
+                .header("lastName", "last")
+                .header("captcha", "correct")
+        ).andExpect(MockMvcResultMatchers.status().isCreated)
+    }
+
     companion object {
         @BeforeAll
         @JvmStatic
         fun setupAuthStub() {
-            WireMock.stubFor(WireMock.post(WireMock.urlMatching("/oauth/token.*"))
+            stubFor(WireMock.post(WireMock.urlMatching("/oauth/token.*"))
                     .willReturn(WireMock.aResponse()
                             .withHeader("Content-Type", "application/json")
                             .withBody(createAuthResponse())))
 
-            WireMock.stubFor(WireMock.post(WireMock.urlMatching("/recaptcha/api/siteverify.*"))
+
+            stubFor(WireMock.post(WireMock.urlMatching("/recaptcha/api/siteverify.*"))
                     .willReturn(WireMock.aResponse()
                             .withHeader("Content-Type", "application/json")
                             .withBody("""{"success": true}""")))
