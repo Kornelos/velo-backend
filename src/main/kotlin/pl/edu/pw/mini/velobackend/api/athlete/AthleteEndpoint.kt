@@ -27,5 +27,5 @@ class AthleteEndpoint(
     fun getAthleteById(@RequestParam athleteId: UUID) = athleteService.getAthleteById(athleteId)
 
     @GetMapping(produces = ["application/json"], value = ["/athletes"])
-    fun getAthletesByIds(@RequestParam athleteIds: List<UUID>) = athleteService.getAthletesByIds(athleteIds)
+    fun getAthletesByIds(@RequestHeader athleteIds: List<UUID>) = athleteService.getAthletesByIds(athleteIds)
 }
