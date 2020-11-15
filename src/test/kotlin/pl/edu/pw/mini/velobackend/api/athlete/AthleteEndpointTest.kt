@@ -56,7 +56,7 @@ class AthleteEndpointTest : BasicEndpointTest() {
 
         val result = mockMvc.perform(MockMvcRequestBuilders.get("/athlete")
                 .header(SecurityConstants.TOKEN_HEADER, auth)
-                .param("athleteId", athlete?.id.toString())
+                .header("athleteId", athlete?.id.toString())
         ).andReturn().response
 
         //then

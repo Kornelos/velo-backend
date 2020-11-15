@@ -7,4 +7,5 @@ interface AthleteRepository {
     fun getAthletesByIds(ids: Collection<UUID>): Collection<Athlete>
     fun addAthlete(athlete: Athlete)
     fun getAthleteByEmail(email: String): Athlete?
+    fun changeStravaConnectedForAthleteWithEmail(email: String, isStravaConnected: Boolean)
 }
