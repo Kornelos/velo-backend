@@ -1,11 +1,11 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.springframework.boot") version "2.3.4.RELEASE"
+    id("org.springframework.boot") version "2.4.0"
     id("io.spring.dependency-management") version "1.0.10.RELEASE"
-    kotlin("jvm") version "1.4.0"
-    kotlin("plugin.spring") version "1.4.0"
-    kotlin("plugin.serialization") version "1.4.0"
+    kotlin("jvm") version "1.4.10"
+    kotlin("plugin.spring") version "1.4.10"
+    kotlin("plugin.serialization") version "1.4.10"
 
 }
 
@@ -37,8 +37,8 @@ dependencies {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     }
     testImplementation("org.amshove.kluent:kluent:1.61")
-    testImplementation("com.github.tomakehurst:wiremock:2.27.1")
-    testImplementation("org.springframework.cloud:spring-cloud-starter-contract-stub-runner:2.2.4.RELEASE")
+    testImplementation("com.github.tomakehurst:wiremock:2.27.2")
+    testImplementation("org.springframework.cloud:spring-cloud-starter-contract-stub-runner:2.2.5.RELEASE")
     testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo:2.2.0")
 }
 
