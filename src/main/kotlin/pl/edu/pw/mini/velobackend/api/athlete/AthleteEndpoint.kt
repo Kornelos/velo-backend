@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import pl.edu.pw.mini.velobackend.domain.athlete.AthleteService
 import java.security.Principal
+import java.util.UUID
 
 @RestController
 @RequestMapping("/athlete")
@@ -21,5 +22,8 @@ class AthleteEndpoint(
     }
 
     @GetMapping(produces = ["application/json"])
-    fun getAthlete(@RequestHeader athleteEmail: String) = athleteService.getAthleteByEmail(athleteEmail)
+    fun getAthleteById(@RequestHeader athleteId: UUID) = athleteService.getAthleteById(athleteId)
+
+    @GetMapping(produces = ["application/json"], value = ["/athletes"])
+    fun getAthletesByIdsWithWorkoutMetadata(@RequestHeader athleteIds: List<UUID>) = athleteService.getAthletesByIdsWithWorkoutMetadata(athleteIds)
 }

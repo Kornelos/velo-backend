@@ -1,5 +1,6 @@
 package pl.edu.pw.mini.velobackend.domain.user
 
+import pl.edu.pw.mini.velobackend.domain.athlete.Athlete
 import java.net.URI
 import java.util.UUID
 
@@ -11,5 +12,6 @@ data class VeloUser(
         val lastName: String,
         var profileImg: URI? = null,
         val athleteUUIDs: MutableSet<UUID> = mutableSetOf(),
-        val isStravaConnected: Boolean = false
+        val isStravaConnected: Boolean = false,
+        val athleteId: UUID
 )

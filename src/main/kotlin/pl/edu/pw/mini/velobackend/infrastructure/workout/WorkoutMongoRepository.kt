@@ -6,6 +6,7 @@ import org.springframework.data.mongodb.core.query.Query
 import org.springframework.stereotype.Repository
 import pl.edu.pw.mini.velobackend.domain.workout.Workout
 import pl.edu.pw.mini.velobackend.domain.workout.WorkoutRepository
+import java.time.LocalDateTime
 import java.util.UUID
 
 @Repository
@@ -27,6 +28,9 @@ class WorkoutMongoRepository(
 
     override fun getWorkoutsForAthleteId(athleteId: UUID): Collection<Workout> = mongoTemplate.find(
             Query.query(Criteria.where("athleteId").`is`(athleteId)), WorkoutDto::class.java).map { it.toWorkout() }
+
+    override fun getWorkoutsForAthleteIdWithinRange(athleteId: UUID, before: LocalDateTime, after: LocalDateTime) = mongoTemplate.find(
+    Query.query(Criteria.where("athleteId").`is`(athleteId).and("startDateTime").gte(after).lt(before)), WorkoutDto::class.java).map { it.toWorkout() }
 
 
     private fun findWorkoutByKey(keyName: String, value: Any): Workout? {

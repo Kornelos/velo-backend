@@ -19,12 +19,7 @@ class LogoutTest : BasicEndpointTest() {
     @Test
     fun `should log out user`() {
         //given user registered
-        mockMvc.perform(MockMvcRequestBuilders.post("/register")
-                .header("Email", "email@test.com")
-                .header("Password", "pass")
-                .header("firstName", "first")
-                .header("lastName", "last")
-        ).andExpect(MockMvcResultMatchers.status().isCreated)
+        registerUser("email@test.com")
 
         //when user logs in
         val loginResponse = mockMvc.perform(MockMvcRequestBuilders.post(securityProperties.loginUrl)

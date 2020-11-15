@@ -26,8 +26,9 @@ class AthleteEndpointTest : BasicEndpointTest() {
     @Test
     fun `should add athlete for coach`() {
         //given
-        createUser("coach")
-        createUser("athlete")
+        registerUser("coach@test.com")
+        registerUser("athlete@test.com")
+
         addStrava("athlete@test.com")
         val auth = login("athlete@test.com")
 
@@ -45,30 +46,21 @@ class AthleteEndpointTest : BasicEndpointTest() {
     }
 
     @Test
-    fun `should return athlete for email`() {
+    fun `should return athlete for id`() {
         //given
-        createUser("athlete")
+        registerUser("athlete@test.com")
         addStrava("athlete@test.com")
         val auth = login("athlete@test.com")
-
+        val athlete = athleteRepository.getAthleteByEmail("athlete@test.com")
         //when
+
         val result = mockMvc.perform(MockMvcRequestBuilders.get("/athlete")
                 .header(SecurityConstants.TOKEN_HEADER, auth)
-                .header("athleteEmail", "athlete@test.com")
+                .header("athleteId", athlete?.id.toString())
         ).andReturn().response
 
         //then
         Json.parseToJsonElement(result.contentAsString).jsonObject.keys `should contain` "id"
-    }
-
-
-    private fun createUser(name: String) {
-        mockMvc.perform(MockMvcRequestBuilders.post("/register")
-                .header("email", "$name@test.com")
-                .header("Password", "pass")
-                .header("firstName", "first")
-                .header("lastName", "last")
-        ).andExpect(MockMvcResultMatchers.status().isCreated)
     }
 
     private fun addStrava(email: String) {

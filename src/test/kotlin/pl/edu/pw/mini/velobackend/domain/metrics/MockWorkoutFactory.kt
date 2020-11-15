@@ -4,12 +4,16 @@ import pl.edu.pw.mini.velobackend.domain.model.Location
 import pl.edu.pw.mini.velobackend.domain.workout.DataSeries
 import pl.edu.pw.mini.velobackend.domain.workout.Workout
 import pl.edu.pw.mini.velobackend.domain.workout.WorkoutType
+import java.time.Duration
 import java.time.LocalDateTime
 import java.util.UUID
 import kotlin.random.Random
 
 class MockWorkoutFactory {
-    fun createMockTrainingWithMetrics(dataPoints: Int): Workout {
+
+    fun createMockTrainingWithMetrics(dataPoints: Int): Workout = createMockTrainingWithMetrics(dataPoints, UUID.randomUUID(), 0)
+
+    fun createMockTrainingWithMetrics(dataPoints: Int, athleteId: UUID, minusDaysFromNow: Long): Workout {
         val ds = DataSeries(
                 time = List(dataPoints) { it },
                 distance = List(dataPoints) { it + applyVariability(5.0, 1.5).toFloat() },
@@ -29,8 +33,8 @@ class MockWorkoutFactory {
         return Workout(
                 id = UUID.randomUUID(),
                 type = WorkoutType.Bike,
-                athleteId = UUID.randomUUID(),
-                startDateTime = LocalDateTime.now(),
+                athleteId = athleteId,
+                startDateTime = LocalDateTime.now().minus(Duration.ofDays(minusDaysFromNow)),
                 stravaId = 1234,
                 dataSeries = ds,
                 metrics = MetricsFactory.createMetricsFor(ds)

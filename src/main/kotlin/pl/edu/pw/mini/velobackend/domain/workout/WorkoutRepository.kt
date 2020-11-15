@@ -1,5 +1,6 @@
 package pl.edu.pw.mini.velobackend.domain.workout
 
+import java.time.LocalDateTime
 import java.util.UUID
 
 interface WorkoutRepository {
@@ -8,4 +9,5 @@ interface WorkoutRepository {
     fun addWorkout(workout: Workout)
     fun workoutExists(stravaId: Long): Boolean
     fun getWorkoutsForAthleteId(athleteId: UUID): Collection<Workout>
+    fun getWorkoutsForAthleteIdWithinRange(athleteId: UUID, before: LocalDateTime, after: LocalDateTime): Collection<Workout>
 }

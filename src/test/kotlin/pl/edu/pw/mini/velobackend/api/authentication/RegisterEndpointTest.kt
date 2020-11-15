@@ -1,5 +1,6 @@
 package pl.edu.pw.mini.velobackend.api.authentication
 
+
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should not be equal to`
 import org.amshove.kluent.`should not be`
@@ -16,14 +17,9 @@ class RegisterEndpointTest : BasicEndpointTest() {
     lateinit var veloUserRepository: VeloUserRepository
 
     @Test
-    fun `should register user if email does not exists in db`() {
+    fun `should register user if email does not exist in db`() {
         //when
-        mockMvc.perform(post("/register")
-                .header("Email", "email@test.com")
-                .header("Password", "pass")
-                .header("firstName", "first")
-                .header("lastName", "last")
-        ).andExpect(status().isCreated)
+        registerUser ( "email@test.com" )
         val user = veloUserRepository.getVeloUserByEmail("email@test.com")!!
 
         //then
@@ -36,21 +32,16 @@ class RegisterEndpointTest : BasicEndpointTest() {
     }
 
     @Test
-    fun `should not register user if email does not exists in db`() {
+    fun `should not register user if email exists in db`() {
         //given
-        mockMvc.perform(post("/register")
-                .header("Email", "email@test.com")
-                .header("Password", "pass")
-                .header("firstName", "test")
-                .header("lastName", "coach")
-        ).andReturn()
+        registerUser("email@test.com")
         //when registering same email again
         mockMvc.perform(post("/register")
                 .header("Email", "email@test.com")
                 .header("Password", "pass")
                 .header("firstName", "test")
                 .header("lastName", "coach")
+                .header("captcha","correct")
         ).andExpect(status().isConflict)
-
     }
 }

@@ -34,7 +34,6 @@ class StravaImportTest : BasicEndpointTest() {
 
     @BeforeEach
     fun beforeEach() {
-        createStubs()
         mongoTemplate.dropCollection(StravaUserDto::class.java)
         mongoTemplate.dropCollection(WorkoutDto::class.java)
     }
@@ -46,6 +45,7 @@ class StravaImportTest : BasicEndpointTest() {
     @Test
     fun `should get workout list and download workouts from the list`() {
         //given
+        createStubs()
         stravaUserRepository.addStravaUser(stravaUser)
 
         //when
@@ -63,6 +63,7 @@ class StravaImportTest : BasicEndpointTest() {
     @Test
     fun `should not fail when strava is down (500)`() {
         //given
+        createStubs()
         val failureStub = stubFor(WireMock.get(anyUrl()).willReturn(serverError()))
         stravaUserRepository.addStravaUser(stravaUser)
 
@@ -84,6 +85,7 @@ class StravaImportTest : BasicEndpointTest() {
     @Test
     fun `should use refresh token if access token is expired`() {
         //given
+        createStubs()
         val expiredToken = "ExpiredAccessToken"
         val expiredTokenUser = StravaUser(1, TokenPair(expiredToken, "refreshToken",
                 LocalDateTime.now().minusHours(1)), UUID.randomUUID())

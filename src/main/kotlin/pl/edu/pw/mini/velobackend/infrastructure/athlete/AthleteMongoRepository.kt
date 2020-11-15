@@ -19,15 +19,20 @@ class AthleteMongoRepository(
     }
 
     override fun addAthlete(athlete: Athlete) {
-        mongoTemplate.save(athlete.toAthleteDto())
+        mongoTemplate.save(athlete)
     }
 
     override fun getAthleteByEmail(email: String): Athlete? = findAthleteByKey("email", email)
 
-    private fun findAthleteByKey(keyName: String, value: Any): Athlete? {
-        val athleteDto = mongoTemplate.findOne(Query.query(
-                Criteria.where(keyName).`is`(value)), AthleteDto::class.java
-        )
-        return athleteDto?.toAthlete()
+    override fun changeStravaConnectedForAthleteWithEmail(email: String, isStravaConnected: Boolean) {
+        val athlete = findAthleteByKey("email",email)
+        if (athlete != null) {
+            mongoTemplate.save(Athlete.Builder(athlete).isStravaConnected(true).build())
+        }
     }
+
+
+    private fun findAthleteByKey(keyName: String, value: Any): Athlete? =
+            mongoTemplate.findOne(Query.query(Criteria.where(keyName).`is`(value)), Athlete::class.java
+    )
 }
