@@ -32,6 +32,8 @@ dependencies {
     implementation("com.sendgrid:sendgrid-java:4.0.1")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
     implementation("org.springdoc:springdoc-openapi-ui:1.4.8")
+    implementation("io.sentry:sentry-spring-boot-starter:3.1.1")
+    implementation("io.sentry:sentry-logback:3.1.1")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
