@@ -5,13 +5,13 @@ import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
 import pl.edu.pw.mini.velobackend.domain.athlete.Athlete
 import pl.edu.pw.mini.velobackend.domain.athlete.AthleteRepository
-import pl.edu.pw.mini.velobackend.domain.user.VeloUser
 import pl.edu.pw.mini.velobackend.domain.user.VeloUserRepository
 import pl.edu.pw.mini.velobackend.domain.workout.Workout
 import pl.edu.pw.mini.velobackend.domain.workout.WorkoutRepository
 import pl.edu.pw.mini.velobackend.infrastructure.strava.auth.StravaUser
 import pl.edu.pw.mini.velobackend.infrastructure.strava.auth.TokenPair
 import pl.edu.pw.mini.velobackend.infrastructure.strava.dao.StravaUserRepository
+import pl.edu.pw.mini.velobackend.infrastructure.strava.model.ActivityType
 import pl.edu.pw.mini.velobackend.infrastructure.strava.model.SummaryActivity
 import pl.edu.pw.mini.velobackend.infrastructure.strava.model.streams.StreamSet
 import pl.edu.pw.mini.velobackend.infrastructure.utils.logger
@@ -49,7 +49,7 @@ class StravaService(
 
         stravaUserRepository.addStravaUser(stravaUser)
         veloUserRepository.changeStravaConnectedForVeloUserWithEmail(email, true)
-        athleteRepository.changeStravaConnectedForAthleteWithEmail(email,true)
+        athleteRepository.changeStravaConnectedForAthleteWithEmail(email, true)
         veloUserRepository.addAthleteForVeloUserWithEmail(email, athlete.id) // add self as trained athlete
 
         logger.info("Successfully added Strava user {} for athlete with email {}", stravaUser.id, email)
@@ -61,6 +61,7 @@ class StravaService(
         val stravaUser = stravaUserRepository.getStravaUserByAthleteId(athleteId)
         return if (stravaUser != null) {
             val activitiesSummary: List<SummaryActivity> = stravaClient.getWorkoutsForStravaUser(stravaUser.tokenPair, before, after)
+                    .filter { it.type == ActivityType.Ride || it.type == ActivityType.VirtualRide } // removing non-bike activities
             val stravaWorkouts = getStreamsForNewWorkouts(activitiesSummary, stravaUser)
             stravaWorkouts.map { (summary, streams) -> saveWorkout(streams, summary, athleteId) }
         } else emptyList()
