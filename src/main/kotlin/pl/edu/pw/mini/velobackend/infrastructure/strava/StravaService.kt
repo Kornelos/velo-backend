@@ -68,14 +68,22 @@ class StravaService(
     }
 
     private fun getStreamsForNewWorkouts(activitiesSummary: List<SummaryActivity>, stravaUser: StravaUser): List<Pair<SummaryActivity, StreamSet?>> {
-        return activitiesSummary.map {
-            var streamSet: StreamSet? = null
-            if (!workoutRepository.workoutExists(it.id ?: 0)) {
-                streamSet = stravaClient.getWorkoutStreams(stravaUser.tokenPair, it)
-            }
-            it to streamSet
-        }.filter { it.second != null }
+        return activitiesSummary.map { summaryToStreams(it, stravaUser) }.filter { it.second != null }
     }
+
+    private fun summaryToStreams(it: SummaryActivity, stravaUser: StravaUser): Pair<SummaryActivity, StreamSet?> =
+            try {
+                var streamSet: StreamSet? = null
+                if (!workoutRepository.workoutExists(it.id ?: 0)) {
+                    streamSet = stravaClient.getWorkoutStreams(stravaUser.tokenPair, it)
+                }
+                it to streamSet
+            } catch (ex: Exception) {
+
+                logger.warn("Failed parsing workout named: [{}] at [{}] for user {} ", it.name, it.startDate, stravaUser.athleteId)
+                it to null
+            }
+
 
     private fun saveWorkout(streams: StreamSet?, summary: SummaryActivity, athleteId: UUID): Workout {
         check(streams != null)
