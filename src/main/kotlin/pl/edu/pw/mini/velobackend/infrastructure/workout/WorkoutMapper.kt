@@ -28,7 +28,7 @@ object WorkoutMapper {
                         streamSet.velocitySmooth?.data ?: emptyList(),
                         streamSet.heartrate?.data ?: emptyList(),
                         streamSet.cadence?.data ?: emptyList(),
-                        streamSet.watts?.data ?: emptyList()
+                        streamSet.watts?.data?.map { it ?: 0 } ?: emptyList()
                 ),
                 metrics = Metrics.Builder()
                         .totalElapsedTime(activity.elapsedTime?.toLong()?.let { Duration.ofSeconds(it) })
