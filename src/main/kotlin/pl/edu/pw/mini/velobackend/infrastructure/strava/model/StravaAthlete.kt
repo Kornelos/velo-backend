@@ -6,17 +6,17 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class StravaAthlete(
         val id: Int,
-        val username: String,
+        val username: String?,
         @SerialName("resource_state")
         val resourceState: Int,
         @SerialName("firstname")
-        val firstName: String,
+        val firstName: String?,
         @SerialName("lastname")
-        val lastName: String,
-        val city: String,
-        val state: String,
+        val lastName: String?,
+        val city: String?,
+        val state: String?,
         val country: String?,
-        val sex: String,
+        val sex: String?,
         val premium: Boolean,
         val summit: Boolean,
         @SerialName("created_at")
