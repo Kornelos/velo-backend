@@ -20,7 +20,7 @@ data class AuthorizationResponse(
         val refreshToken: String,
         @SerialName("access_token")
         val accessToken: String,
-        val athlete: StravaAthlete
+        val athlete: StravaAthlete? = null
 )
 
 

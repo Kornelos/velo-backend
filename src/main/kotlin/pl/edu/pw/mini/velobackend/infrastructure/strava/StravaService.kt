@@ -42,7 +42,7 @@ class StravaService(
                 expirationDate = authorizationResponse.expiresAt
         )
         val stravaUser = StravaUser(
-                authorizationResponse.athlete.id,
+                authorizationResponse.athlete?.id ?: throw IllegalStateException("Strava returned no athlete ID"),
                 tokenPair,
                 athlete.id
         )
