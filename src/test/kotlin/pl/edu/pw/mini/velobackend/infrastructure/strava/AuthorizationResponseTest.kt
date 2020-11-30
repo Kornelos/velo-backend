@@ -28,7 +28,7 @@ class AuthorizationResponseTest {
 
         //then
         authorizationResponse.tokenType `should be equal to` "Bearer"
-        authorizationResponse.athlete.firstName `should be equal to` "Kornel"
+        authorizationResponse.athlete?.firstName `should be equal to` "Kornel"
         authorizationResponse.expiresIn.toSeconds() `should be equal to` 20064
         authorizationResponse.expiresAt `should be equal to` LocalDateTime.of(2020, 9, 6, 0, 38, 52)
 
