@@ -18,7 +18,8 @@ data class Metrics(
         val avgHeartRate: Float?,
         val maxHeartRate: Int?,
         val avgCadence: Float?,
-        val maxCadence: Int?
+        val maxCadence: Int?,
+        val powerCurve: Map<Int,Int?> = emptyMap()
 ) {
     class Builder {
         private var totalElapsedTime: Duration? = null
@@ -37,6 +38,7 @@ data class Metrics(
         private var maxHeartRate: Int? = null
         private var avgCadence: Float? = null
         private var maxCadence: Int? = null
+        private var powerCurve: Map<Int, Int?> = emptyMap()
 
         fun totalElapsedTime(totalElapsedTime: Duration?) = apply { this.totalElapsedTime = totalElapsedTime }
         fun totalMovingTime(totalMovingTime: Duration?) = apply { this.totalMovingTime = totalMovingTime }
@@ -54,6 +56,7 @@ data class Metrics(
         fun maxHeartRate(maxHeartRate: Int?) = apply { this.maxHeartRate = maxHeartRate }
         fun avgCadence(avgCadence: Float?) = apply { this.avgCadence = avgCadence }
         fun maxCadence(maxCadence: Int?) = apply { this.maxCadence = maxCadence }
+        fun powerCurve(powerCurve: Map<Int, Int?>) = apply { this.powerCurve = powerCurve }
         fun build() = Metrics(
                 totalElapsedTime,
                 totalMovingTime,
@@ -70,7 +73,8 @@ data class Metrics(
                 avgHeartRate,
                 maxHeartRate,
                 avgCadence,
-                maxCadence
+                maxCadence,
+                powerCurve
         )
     }
 }

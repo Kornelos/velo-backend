@@ -32,6 +32,7 @@ class StravaClient(
         val stravaUserRepository: StravaUserRepository,
 ) {
     val jsonParser = Json { ignoreUnknownKeys = true }
+
     fun exchangeCodeForAccessToken(code: String): AuthorizationResponse {
         val uriBuilder = UriComponentsBuilder.fromHttpUrl(stravaProperties.tokenUrl)
                 .queryParam("client_id", stravaProperties.clientId)
