@@ -1,6 +1,7 @@
 package pl.edu.pw.mini.velobackend.infrastructure.workout
 
 import pl.edu.pw.mini.velobackend.domain.metrics.Metrics
+import pl.edu.pw.mini.velobackend.domain.metrics.PowerCurveCalculator
 import pl.edu.pw.mini.velobackend.domain.model.Location
 import pl.edu.pw.mini.velobackend.domain.workout.DataSeries
 import pl.edu.pw.mini.velobackend.domain.workout.Workout
@@ -12,24 +13,25 @@ import java.time.Duration
 import java.time.LocalDateTime
 import java.util.UUID
 
-object WorkoutMapper {
+object StravaActivityToWorkoutMapper {
     fun createWorkout(activity: SummaryActivity, streamSet: StreamSet, athleteId: UUID): Workout {
+        val dataSeries = DataSeries(
+                streamSet.time?.data ?: emptyList(),
+                streamSet.distance?.data ?: emptyList(),
+                streamSet.latlng?.data?.map { Location(it[0], it[1]) } ?: emptyList(),
+                streamSet.altitude?.data ?: emptyList(),
+                streamSet.velocitySmooth?.data ?: emptyList(),
+                streamSet.heartrate?.data ?: emptyList(),
+                streamSet.cadence?.data ?: emptyList(),
+                streamSet.watts?.data?.map { it ?: 0 } ?: emptyList()
+        )
         return Workout(
                 name = activity.name ?: "Unnamed Workout",
                 type = parseActivityType(activity.type),
                 stravaId = activity.id,
                 athleteId = athleteId,
                 startDateTime = activity.startDate ?: LocalDateTime.MIN,
-                dataSeries = DataSeries(
-                        streamSet.time?.data ?: emptyList(),
-                        streamSet.distance?.data ?: emptyList(),
-                        streamSet.latlng?.data?.map { Location(it[0], it[1]) } ?: emptyList(),
-                        streamSet.altitude?.data ?: emptyList(),
-                        streamSet.velocitySmooth?.data ?: emptyList(),
-                        streamSet.heartrate?.data ?: emptyList(),
-                        streamSet.cadence?.data ?: emptyList(),
-                        streamSet.watts?.data?.map { it ?: 0 } ?: emptyList()
-                ),
+                dataSeries = dataSeries,
                 metrics = Metrics.Builder()
                         .totalElapsedTime(activity.elapsedTime?.toLong()?.let { Duration.ofSeconds(it) })
                         .totalMovingTime(activity.elapsedTime?.toLong()?.let { Duration.ofSeconds(it) })
@@ -39,6 +41,7 @@ object WorkoutMapper {
                         .avgPower(activity.averageWatts)
                         .maxPower(activity.maxWatts)
                         .normalizedPower(activity.weightedAverageWatts)
+                        .powerCurve(PowerCurveCalculator.calculate(dataSeries.power, activity.elapsedTime ?: throw IllegalStateException("Workout doesn't have duration")))
                         .build()
         )
     }
