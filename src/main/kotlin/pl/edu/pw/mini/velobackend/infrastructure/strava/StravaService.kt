@@ -62,7 +62,9 @@ class StravaService(
         return if (stravaUser != null) {
             val activitiesSummary: List<SummaryActivity> = stravaClient.getWorkoutsForStravaUser(stravaUser.tokenPair, before, after)
                     .filter { it.type == ActivityType.Ride || it.type == ActivityType.VirtualRide } // removing non-bike activities
+
             val stravaWorkouts = getStreamsForNewWorkouts(activitiesSummary, stravaUser)
+
             stravaWorkouts.map { (summary, streams) -> saveWorkout(streams, summary, athleteId) }
         } else emptyList()
     }

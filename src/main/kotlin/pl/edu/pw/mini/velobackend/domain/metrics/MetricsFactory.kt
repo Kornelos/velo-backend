@@ -18,6 +18,7 @@ class MetricsFactory {
             val altitudePairwiseDiff = data.altitude.windowed(2, 1).map { it[1] - it[0] }
             val totalDescent = altitudePairwiseDiff.filter { it < 0 }.sum().absoluteValue
             val totalAscent = altitudePairwiseDiff.filter { it > 0 }.sum()
+            val powerCurve = PowerCurveCalculator.calculate(data.power, data.time.last())
 
             return Metrics(
                     totalElapsedTime = totalTime,
