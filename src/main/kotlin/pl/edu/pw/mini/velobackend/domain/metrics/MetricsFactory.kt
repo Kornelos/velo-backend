@@ -36,7 +36,8 @@ class MetricsFactory {
                     avgHeartRate = data.heartrate.average().toFloat(),
                     maxHeartRate = data.heartrate.maxOrNull(),
                     maxCadence = data.cadence.maxOrNull(),
-                    avgCadence = data.cadence.average().toFloat()
+                    avgCadence = data.cadence.average().toFloat(),
+                    powerCurve = powerCurve
             )
         }
 
