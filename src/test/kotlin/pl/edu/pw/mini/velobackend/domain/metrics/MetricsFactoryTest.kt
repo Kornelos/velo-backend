@@ -82,7 +82,7 @@ class MetricsFactoryTest {
         metrics.maxHeartRate shouldBeEqualTo 200
         metrics.avgCadence shouldBeEqualTo 80.0F
         metrics.maxCadence shouldBeEqualTo 100
-        metrics.powerCurve.`should be empty`()
+        metrics.powerCurve.powers.`should be empty`()
         metrics.maxPower `should be` null
     }
 

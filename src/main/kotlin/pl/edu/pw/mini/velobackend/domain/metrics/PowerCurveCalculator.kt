@@ -11,13 +11,14 @@ object PowerCurveCalculator {
             3600..7500 step 300
     ).flatten()
 
-    fun calculate(power: List<Int>, workoutDuration: Int): Map<Int, Int?> {
+    fun calculate(power: List<Int>, workoutDuration: Int): PowerCurve {
         return if (power.isEmpty()) {
-            emptyMap()
+            PowerCurve.empty()
         } else {
-            times.filter { it <= workoutDuration }.map { timePoint ->
+            val powerCurveMap = times.filter { it <= workoutDuration }.map { timePoint ->
                 timePoint to (power.windowed(timePoint, getStep(timePoint)).map { it.average() }.maxOrNull()?.toInt())
             }.toMap()
+            return PowerCurve(times = powerCurveMap.keys.toList(), powers = powerCurveMap.values.toList())
         }
     }
 
