@@ -15,7 +15,7 @@ import pl.edu.pw.mini.velobackend.infrastructure.strava.model.ActivityType
 import pl.edu.pw.mini.velobackend.infrastructure.strava.model.SummaryActivity
 import pl.edu.pw.mini.velobackend.infrastructure.strava.model.streams.StreamSet
 import pl.edu.pw.mini.velobackend.infrastructure.utils.logger
-import pl.edu.pw.mini.velobackend.infrastructure.workout.WorkoutMapper
+import pl.edu.pw.mini.velobackend.infrastructure.workout.StravaActivityToWorkoutMapper
 import java.time.Instant
 import java.util.UUID
 
@@ -89,7 +89,7 @@ class StravaService(
 
     private fun saveWorkout(streams: StreamSet?, summary: SummaryActivity, athleteId: UUID): Workout {
         check(streams != null)
-        val workout = WorkoutMapper.createWorkout(summary, streams, athleteId)
+        val workout = StravaActivityToWorkoutMapper.createWorkout(summary, streams, athleteId)
         workoutRepository.addWorkout(workout)
         return workout
     }
