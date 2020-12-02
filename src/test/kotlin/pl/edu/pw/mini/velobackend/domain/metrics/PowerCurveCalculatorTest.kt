@@ -1,7 +1,6 @@
 package pl.edu.pw.mini.velobackend.domain.metrics
 
 import org.amshove.kluent.`should be equal to`
-import org.amshove.kluent.`should have key`
 import org.amshove.kluent.shouldNotBeEmpty
 import org.junit.jupiter.api.Test
 
@@ -16,7 +15,7 @@ class PowerCurveCalculatorTest{
         val powerCurve = PowerCurveCalculator.calculate(workout.dataSeries.power, workout.metrics?.totalMovingTime?.toSeconds()!!.toInt())
 
         //then
-        powerCurve.shouldNotBeEmpty()
+        powerCurve.powers.shouldNotBeEmpty()
     }
 
     @Test
@@ -28,10 +27,10 @@ class PowerCurveCalculatorTest{
         val powerCurve = PowerCurveCalculator.calculate(powers,powers.size)
 
         //then
-        powerCurve[1] `should be equal to` 1000
-        powerCurve[2] `should be equal to` 600
-        powerCurve[3] `should be equal to` 466
-        powerCurve[4] `should be equal to` 525
-        powerCurve[5] `should be equal to` powers.average().toInt()
+        powerCurve.powers[0] `should be equal to` 1000
+        powerCurve.powers[1] `should be equal to` 600
+        powerCurve.powers[2] `should be equal to` 466
+        powerCurve.powers[3] `should be equal to` 525
+        powerCurve.powers[4] `should be equal to` powers.average().toInt()
     }
 }
