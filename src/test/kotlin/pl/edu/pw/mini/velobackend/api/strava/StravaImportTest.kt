@@ -61,6 +61,31 @@ class StravaImportTest : BasicEndpointTest() {
     }
 
     @Test
+    fun `should not add the same workouts is they are already imported`(){
+        //given
+        createStubs()
+        stravaUserRepository.addStravaUser(stravaUser)
+
+        //when
+        mockMvc.perform(MockMvcRequestBuilders.post(UriComponentsBuilder.fromUriString("/strava/import")
+                .queryParam("athleteId", stravaUser.athleteId.toString())
+                .queryParam("beforeEpoch", WorkoutImportTestData.beforeEpoch.epochSecond)
+                .queryParam("afterEpoch", WorkoutImportTestData.afterEpoch.epochSecond)
+                .build().toUri()
+        )).andReturn().response
+
+        val response = mockMvc.perform(MockMvcRequestBuilders.post(UriComponentsBuilder.fromUriString("/strava/import")
+                .queryParam("athleteId", stravaUser.athleteId.toString())
+                .queryParam("beforeEpoch", WorkoutImportTestData.beforeEpoch.epochSecond)
+                .queryParam("afterEpoch", WorkoutImportTestData.afterEpoch.epochSecond)
+                .build().toUri()
+        )).andReturn().response
+
+        //then
+        Json.parseToJsonElement(response.contentAsString).jsonArray.count() `should be equal to` 0
+    }
+
+    @Test
     fun `should not fail when strava is down (500)`() {
         //given
         createStubs()

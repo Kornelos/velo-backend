@@ -76,7 +76,7 @@ class StravaService(
     private fun summaryToStreams(it: SummaryActivity, stravaUser: StravaUser): Pair<SummaryActivity, StreamSet?> =
             try {
                 var streamSet: StreamSet? = null
-                if (!workoutRepository.workoutExists(it.id ?: 0)) {
+                if (!workoutRepository.workoutExists(stravaUser.athleteId!!,it.id ?: 0)) {
                     streamSet = stravaClient.getWorkoutStreams(stravaUser.tokenPair, it)
                 }
                 it to streamSet

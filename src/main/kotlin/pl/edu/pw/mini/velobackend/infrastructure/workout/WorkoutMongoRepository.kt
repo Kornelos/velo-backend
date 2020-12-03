@@ -23,8 +23,8 @@ class WorkoutMongoRepository(
         mongoTemplate.save(workout.toWorkoutDto())
     }
 
-    override fun workoutExists(stravaId: Long): Boolean = mongoTemplate.findOne(
-            Query.query(Criteria.where("stravaId").`is`(stravaId)), WorkoutDto::class.java) != null
+    override fun workoutExists(athleteId: UUID, stravaId: Long): Boolean = mongoTemplate.findOne(
+            Query.query(Criteria.where("stravaId").`is`(stravaId).and("athleteId").`is`(athleteId)), WorkoutDto::class.java) != null
 
     override fun getWorkoutsForAthleteId(athleteId: UUID): Collection<Workout> = mongoTemplate.find(
             Query.query(Criteria.where("athleteId").`is`(athleteId)), WorkoutDto::class.java).map { it.toWorkout() }
