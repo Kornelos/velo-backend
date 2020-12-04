@@ -15,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
+import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.web.util.UriComponentsBuilder
 import pl.edu.pw.mini.velobackend.api.BasicEndpointTest
@@ -49,16 +50,46 @@ class StravaImportTest : BasicEndpointTest() {
         stravaUserRepository.addStravaUser(stravaUser)
 
         //when
-        val response = mockMvc.perform(MockMvcRequestBuilders.post(UriComponentsBuilder.fromUriString("/strava/import")
-                .queryParam("athleteId", stravaUser.athleteId.toString())
-                .queryParam("beforeEpoch", WorkoutImportTestData.beforeEpoch.epochSecond)
-                .queryParam("afterEpoch", WorkoutImportTestData.afterEpoch.epochSecond)
-                .build().toUri()
-        )).andReturn().response
+        val response = importStravaWorkoutsRequest(stravaUser.athleteId.toString(), WorkoutImportTestData.beforeEpoch.epochSecond, WorkoutImportTestData.afterEpoch.epochSecond)
 
         //then
         Json.parseToJsonElement(response.contentAsString).jsonArray.count() `should be equal to` 4
     }
+
+    @Test
+    fun `should not add the same workouts is they are already imported`() {
+        //given
+        createStubs()
+        stravaUserRepository.addStravaUser(stravaUser)
+
+        //when
+        importStravaWorkoutsRequest(stravaUser.athleteId.toString(), WorkoutImportTestData.beforeEpoch.epochSecond, WorkoutImportTestData.afterEpoch.epochSecond)
+
+        val response = importStravaWorkoutsRequest(stravaUser.athleteId.toString(), WorkoutImportTestData.beforeEpoch.epochSecond, WorkoutImportTestData.afterEpoch.epochSecond)
+
+        //then
+        Json.parseToJsonElement(response.contentAsString).jsonArray.count() `should be equal to` 0
+    }
+
+    @Test
+    fun `should add the same workouts if they are imported by different athletes`(){
+        //given
+        createStubs()
+        stravaUserRepository.addStravaUser(stravaUser)
+        val stravaUser2 = StravaUser(2, TokenPair("accessToken", "refreshToken",
+                LocalDateTime.now().plusHours(1)), UUID.randomUUID())
+        stravaUserRepository.addStravaUser(stravaUser2)
+
+        //when
+        val responseForFirstUser = importStravaWorkoutsRequest(stravaUser.athleteId.toString(), WorkoutImportTestData.beforeEpoch.epochSecond, WorkoutImportTestData.afterEpoch.epochSecond)
+        val responseForSecondUser = importStravaWorkoutsRequest(stravaUser2.athleteId.toString(), WorkoutImportTestData.beforeEpoch.epochSecond, WorkoutImportTestData.afterEpoch.epochSecond)
+
+        //then
+        Json.parseToJsonElement(responseForFirstUser.contentAsString).jsonArray.count() `should be equal to` 4
+        Json.parseToJsonElement(responseForSecondUser.contentAsString).jsonArray.count() `should be equal to` 4
+
+    }
+
 
     @Test
     fun `should not fail when strava is down (500)`() {
@@ -68,12 +99,7 @@ class StravaImportTest : BasicEndpointTest() {
         stravaUserRepository.addStravaUser(stravaUser)
 
         //when
-        val response = mockMvc.perform(MockMvcRequestBuilders.post(UriComponentsBuilder.fromUriString("/strava/import")
-                .queryParam("athleteId", stravaUser.athleteId.toString())
-                .queryParam("beforeEpoch", "16000000")
-                .queryParam("afterEpoch", "15000000")
-                .build().toUri()
-        )).andReturn().response
+        val response = importStravaWorkoutsRequest(stravaUser.athleteId.toString(), 16000000, 15000000)
 
         //then
         response.status `should be equal to` HttpStatus.FAILED_DEPENDENCY.value()
@@ -92,12 +118,7 @@ class StravaImportTest : BasicEndpointTest() {
         stravaUserRepository.addStravaUser(expiredTokenUser)
 
         //when
-        mockMvc.perform(MockMvcRequestBuilders.post(UriComponentsBuilder.fromUriString("/strava/import")
-                .queryParam("athleteId", expiredTokenUser.athleteId.toString())
-                .queryParam("beforeEpoch", "16000000")
-                .queryParam("afterEpoch", "15000000")
-                .build().toUri()
-        ))
+        importStravaWorkoutsRequest(stravaUser.athleteId.toString(), 16000000, 15000000)
 
         //then
         stravaUserRepository.getStravaUserById(expiredTokenUser.id)!!.tokenPair `should not be equal to` expiredTokenUser.tokenPair
@@ -114,5 +135,14 @@ class StravaImportTest : BasicEndpointTest() {
         stubFor(WireMock.get(urlMatching("/activities/.*/streams.*"))
                 .willReturn(aResponse().withTransformers("stream")
                 ))
+    }
+
+    private fun importStravaWorkoutsRequest(stravaUser: String, before: Long, after: Long): MockHttpServletResponse {
+        return mockMvc.perform(MockMvcRequestBuilders.post(UriComponentsBuilder.fromUriString("/strava/import")
+                .queryParam("athleteId", stravaUser)
+                .queryParam("beforeEpoch", before)
+                .queryParam("afterEpoch", after)
+                .build().toUri()
+        )).andReturn().response
     }
 }
