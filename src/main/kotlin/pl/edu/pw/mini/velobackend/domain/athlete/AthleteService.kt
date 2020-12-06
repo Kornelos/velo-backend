@@ -29,7 +29,6 @@ class AthleteService(
         userRepository.saveVeloUser(coach)
     }
 
-    fun getAthleteByEmail(email: String) = athleteRepository.getAthleteByEmail(email)
     fun getAthleteById(athleteId: UUID): Athlete {
         return athleteRepository.getAthleteById(athleteId) ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Athlete with such ID does not exist")
     }
@@ -42,5 +41,22 @@ class AthleteService(
 
     }
 
+    fun removeAthleteForUserWithEmail(coachEmail: String, athleteEmail: String): AthleteRemovalResult {
+        val coach: VeloUser = userRepository.getVeloUserByEmail(coachEmail)
+                ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Coach with such email does not exist")
+        val athlete: Athlete = athleteRepository.getAthleteByEmail(athleteEmail)
+                ?: throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR)
 
+        return if(coach.athleteUUIDs.remove(athlete.id)){
+            userRepository.saveVeloUser(coach)
+            SuccessAthleteRemoval()
+        } else{
+            log.error("Athlete $athleteEmail removal failed, $coachEmail athlete list does not contain selected athlete.")
+            FailedAthleteRemoval()
+        }
+    }
 }
+
+abstract class AthleteRemovalResult(val success: Boolean, val message: String)
+class SuccessAthleteRemoval : AthleteRemovalResult(true,"Athlete successfully removed from coach")
+class FailedAthleteRemoval : AthleteRemovalResult(false, "Athlete removal from coach failed")
