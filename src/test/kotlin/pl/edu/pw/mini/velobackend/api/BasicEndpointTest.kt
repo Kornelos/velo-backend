@@ -65,7 +65,7 @@ abstract class BasicEndpointTest {
     fun registerUser(email: String) {
         mockMvc.perform(MockMvcRequestBuilders.post("/register")
                 .header("Email", email)
-                .header("Password", "pass")
+                .header("Password", "Password123!")
                 .header("firstName", "first")
                 .header("lastName", "last")
                 .header("captcha", "correct")

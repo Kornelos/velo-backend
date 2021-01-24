@@ -14,6 +14,7 @@ import pl.edu.pw.mini.velobackend.domain.user.VeloUserCreator
 import pl.edu.pw.mini.velobackend.domain.user.VeloUserRepository
 import pl.edu.pw.mini.velobackend.infrastructure.security.CaptchaService
 import pl.edu.pw.mini.velobackend.infrastructure.security.SecurityConstants.EMAIL_REGEX
+import pl.edu.pw.mini.velobackend.infrastructure.security.SecurityConstants.PASSWORD_REGEX
 import java.util.UUID
 
 @RestController
@@ -37,8 +38,8 @@ class RegisterEndpoint(
         if(!captchaService.validateNotRobot(captcha)){
             return ResponseEntity(HttpStatus.BAD_REQUEST)
         }
-        //TODO: match password
-        //require(password.matches(PASSWORD_REGEX))
+
+        require(password.matches(PASSWORD_REGEX))
         if (veloUserRepository.getVeloUserByEmail(email) != null) {
             return ResponseEntity(HttpStatus.CONFLICT)
         }
