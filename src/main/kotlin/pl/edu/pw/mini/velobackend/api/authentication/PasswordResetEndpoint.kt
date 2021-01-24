@@ -2,10 +2,8 @@ package pl.edu.pw.mini.velobackend.api.authentication
 
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestHeader
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.ResponseStatusException
 import pl.edu.pw.mini.velobackend.domain.user.ForgottenPasswordTokenRepository
@@ -33,14 +31,16 @@ class PasswordResetEndpoint(
         }
     }
 
-    @GetMapping("/confirm-password")
-    fun changeForgottenPassword(@RequestParam tokenId: UUID): String {
+    @PostMapping("/new-password")
+    fun changeForgottenPassword(@RequestHeader tokenId: UUID, @RequestHeader newPassword: String) {
+        if (newPassword.isEmpty() || newPassword.length > 64) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Provide valid password")
+        }
         val token = forgottenPasswordTokenRepository.getTokenById(tokenId)
         if (token != null) {
-            veloUserRepository.changePasswordForVeloUserWithEmail(token.email, token.newPassword)
+            veloUserRepository.changePasswordForVeloUserWithEmail(token.email, newPassword)
         } else {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST)
         }
-        return token.newPassword
     }
 }

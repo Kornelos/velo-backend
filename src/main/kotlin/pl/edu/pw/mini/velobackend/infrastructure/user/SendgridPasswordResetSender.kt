@@ -7,10 +7,12 @@ import org.springframework.stereotype.Service
 import pl.edu.pw.mini.velobackend.domain.user.ForgottenPasswordToken
 import pl.edu.pw.mini.velobackend.domain.user.ForgottenPasswordTokenRepository
 import pl.edu.pw.mini.velobackend.domain.user.PasswordResetSender
+import pl.edu.pw.mini.velobackend.infrastructure.configuration.FrontendProperties
 
 @Service
 class SendgridPasswordResetSender(
         private val forgottenPasswordTokenRepository: ForgottenPasswordTokenRepository,
+        private val frontendProperties: FrontendProperties,
         private val sendGrid: SendGrid
 ) : PasswordResetSender {
     //todo: add properties for sender and url
@@ -25,7 +27,7 @@ class SendgridPasswordResetSender(
         val request = Request()
         request.method = Method.POST
         request.endpoint = "mail/send"
-        request.body = """{"personalizations": [{"to": [{"email": "$email"}],"dynamic_template_data": {"firstname": "$firstname","url" : "http://localhost:8081/confirm-password?tokenId=${resetToken.id}"},"subject": "$subject"}],"from": {"email": "$from","name": "velo"},"reply_to": {"email": "$from","name": "velo"},"template_id": "$templateId"}"""
+        request.body = """{"personalizations": [{"to": [{"email": "$email"}],"dynamic_template_data": {"firstname": "$firstname","url" : "${frontendProperties.origin}/confirm-password?tokenId=${resetToken.id}"},"subject": "$subject"}],"from": {"email": "$from","name": "velo"},"reply_to": {"email": "$from","name": "velo"},"template_id": "$templateId"}"""
         sendGrid.api(request)
     }
 
