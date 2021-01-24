@@ -2,6 +2,7 @@ package pl.edu.pw.mini.velobackend.api.authentication
 
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RestController
@@ -18,7 +19,8 @@ import java.util.UUID
 class PasswordResetEndpoint(
         val veloUserRepository: VeloUserRepository,
         val forgottenPasswordTokenRepository: ForgottenPasswordTokenRepository,
-        val passwordResetSender: PasswordResetSender
+        val passwordResetSender: PasswordResetSender,
+        val passwordEncoder: PasswordEncoder,
 ) {
 
     @PostMapping("/reset-password")
@@ -39,7 +41,7 @@ class PasswordResetEndpoint(
         }
         val token = forgottenPasswordTokenRepository.getTokenById(tokenId)
         if (token != null) {
-            veloUserRepository.changePasswordForVeloUserWithEmail(token.email, newPassword)
+            veloUserRepository.changePasswordForVeloUserWithEmail(token.email, passwordEncoder.encode(newPassword))
         } else {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST)
         }
