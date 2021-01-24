@@ -32,7 +32,7 @@ internal class SecurityConfiguration(
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers(
-                        "/", "/strava/auth", "/register", "/reset-password", "/confirm-password",
+                        "/", "/strava/auth", "/register", "/reset-password", "/new-password",
                         "/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**", "/swagger-resources/**", "/swagger-resources"
                 ).permitAll()
                 .anyRequest().authenticated()
