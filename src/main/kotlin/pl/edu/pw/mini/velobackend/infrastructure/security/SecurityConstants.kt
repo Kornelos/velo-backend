@@ -9,6 +9,6 @@ object SecurityConstants {
     const val TOKEN_ISSUER = "velo-backend"
     const val TOKEN_AUDIENCE = "velo-frontend"
 
-    val PASSWORD_REGEX = Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%^&*])(?=.{8,})")
+    val PASSWORD_REGEX = Regex("^.*(?=.{8,})(?=.*\\d)(?=.*[a-zA-Z])|(?=.{8,})(?=.*\\d)(?=.*[!@#\$%^&])|(?=.{8,})(?=.*[a-zA-Z])(?=.*[!@#\$%^&]).*\$")
     val EMAIL_REGEX = Regex("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}\$")
 }

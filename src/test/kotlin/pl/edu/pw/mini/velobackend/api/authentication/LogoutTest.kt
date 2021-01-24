@@ -24,7 +24,7 @@ class LogoutTest : BasicEndpointTest() {
         //when user logs in
         val loginResponse = mockMvc.perform(MockMvcRequestBuilders.post(securityProperties.loginUrl)
                 .header("Email", "email@test.com")
-                .header("Password", "pass")
+                .header("Password", "Password123!")
         ).andReturn().response
 
         val authorization = loginResponse.getHeaderValue(SecurityConstants.TOKEN_HEADER) as String

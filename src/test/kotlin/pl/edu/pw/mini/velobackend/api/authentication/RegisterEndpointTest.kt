@@ -25,7 +25,7 @@ class RegisterEndpointTest : BasicEndpointTest() {
         //then
         user `should not be` null
         user.email `should be equal to` "email@test.com"
-        user.password `should not be equal to` "pass" // should be encoded
+        user.password `should not be equal to` "Password123!" // should be encoded
         user.firstName `should be equal to` "first"
         user.lastName `should be equal to` "last"
 
@@ -38,7 +38,7 @@ class RegisterEndpointTest : BasicEndpointTest() {
         //when registering same email again
         mockMvc.perform(post("/register")
                 .header("Email", "email@test.com")
-                .header("Password", "pass")
+                .header("Password", "Password123!")
                 .header("firstName", "test")
                 .header("lastName", "coach")
                 .header("captcha","correct")

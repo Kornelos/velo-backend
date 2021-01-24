@@ -33,13 +33,13 @@ class PasswordResetTest : BasicEndpointTest() {
         val tokenId = forgottenPasswordTokenRepository.getTokenByEmail("email@test.com")!!.id
 
         //and
-        mockMvc.perform(MockMvcRequestBuilders.post("/new-password").header("tokenId",tokenId).header("newPassword","secret-password"))
+        mockMvc.perform(MockMvcRequestBuilders.post("/new-password").header("tokenId",tokenId).header("newPassword","Secret-Password123!"))
                 .andExpect(MockMvcResultMatchers.status().isOk)
         val newPass = userRepository.getVeloUserByEmail("email@test.com")!!.password
 
         //then
         oldPass `should not be equal to` newPass
-        newPass `should be equal to` "secret-password"
+        newPass `should be equal to` "Secret-Password123!"
     }
 
 }

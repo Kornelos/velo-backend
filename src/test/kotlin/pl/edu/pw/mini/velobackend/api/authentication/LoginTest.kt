@@ -20,7 +20,7 @@ class LoginTest : BasicEndpointTest() {
         //when
         val response = mockMvc.perform(post(securityProperties.loginUrl)
                 .header("Email", "email@test.com")
-                .header("Password", "pass")
+                .header("Password", "Password123!")
         ).andReturn().response
 
         //then

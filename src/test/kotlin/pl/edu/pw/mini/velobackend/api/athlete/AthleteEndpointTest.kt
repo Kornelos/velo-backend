@@ -75,7 +75,7 @@ class AthleteEndpointTest : BasicEndpointTest() {
 
     private fun login(email: String) = mockMvc.perform(MockMvcRequestBuilders.post(securityProperties.loginUrl)
             .header("email", email)
-            .header("Password", "pass")
+            .header("Password", "Password123!")
     ).andReturn().response.getHeader(SecurityConstants.TOKEN_HEADER)!!
 
 }
