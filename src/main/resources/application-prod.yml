@@ -1,0 +1,5 @@
+frontend:
+  origin: "https://velo.mini.pw.edu.pl"
+
+sentry:
+  dsn: https://sentry-url

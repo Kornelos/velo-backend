@@ -1,0 +1,32 @@
+server:
+  port: 8081
+
+strava:
+  tokenUrl: "https://www.strava.com/oauth/token"
+  apiUrl: "https://www.strava.com/api/v3"
+  clientSecret: "secret"
+  clientId: "clientId"
+
+security:
+  loginUrl: "/authenticate"
+  jwtSecret: "secret"
+
+spring:
+  profiles:
+    active: dev
+  data:
+    mongodb:
+      authentication-database: admin
+      #      username: on production this should be filled in
+      #      password:
+      database: velodb
+      port: 27017
+      host: localhost
+  sendgrid:
+    api-key: secret
+
+google:
+  recaptcha:
+    enabled: true
+    key: "secret"
+    url: "https://www.google.com/recaptcha/api/siteverify"

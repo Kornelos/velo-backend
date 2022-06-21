@@ -1,0 +1,17 @@
+frontend:
+  origin: "http://localhost:8080"
+
+strava:
+  tokenUrl: "http://localhost:${wiremock.server.port}/oauth/token"
+  apiUrl: "http://localhost:${wiremock.server.port}"
+
+spring:
+  data:
+    mongodb:
+      port: 0
+
+google:
+  recaptcha:
+    enabled: false
+    key: "secret"
+    url: "http://localhost:${wiremock.server.port}/recaptcha/api/siteverify"
